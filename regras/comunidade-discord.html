@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunidade Discord - Regras NCRP</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary: #8b5cf6; /* Roxo estilo GitBook/Hype */
+            --primary-hover: #7c3aed;
+            --sidebar-bg: #14161f;
+            --content-bg: #0b0c10;
+            --border-color: #2d313f;
+            --text-main: #e6ecf1;
+            --text-muted: #cbd5e1;
+            --card-bg: #1e2128;
+            --accent: #06b6d4;
+        }
+
+        /* User Contrast Fixes */
+        .rule-item h4, .rule-item h5, 
+        .rule-card h4, .rule-card h5,
+        .category-card h4, .category-card h5 {
+            color: #60a5fa !important; /* Blue Title */
+        }
+        
+        .rule-item p, .rule-card p, 
+        .category-card p, .info-box p, 
+        .lead, .text-muted {
+            color: #ffffff !important; /* White Description */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--content-bg);
+            color: var(--text-main);
+            overflow: hidden; /* Prevent body scroll, handle in split view */
+            height: 100vh;
+            display: flex;
+            margin: 0;
+        }
+
+        /* Sidebar Layout */
+        .sidebar-wrapper {
+            width: 300px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            flex-shrink: 0;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-search {
+            padding: 0 24px 16px 24px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: #000000;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 12px 8px 36px;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .search-shortcut {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #2d313f;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #3f4455;
+        }
+
+        .sidebar-nav {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 16px 0;
+        }
+
+        .sidebar-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Nav Items Styled like GitBook */
+        .nav-category {
+            padding: 8px 24px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            margin-top: 16px;
+        }
+
+        .nav-item-link {
+            display: flex;
+            align-items: center;
+            padding: 8px 24px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-left: 3px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .nav-item-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .nav-item-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            background: linear-gradient(90deg, rgba(139, 92, 246, 0.1), transparent);
+            font-weight: 500;
+        }
+
+        .nav-item-link i {
+            width: 20px;
+            margin-right: 10px;
+            opacity: 0.7;
+        }
+
+        /* Main Content Layout */
+        .main-wrapper {
+            flex-grow: 1;
+            height: 100vh;
+            overflow-y: auto;
+            position: relative;
+            background-color: var(--content-bg);
+        }
+
+        .content-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 40px 60px 40px;
+        }
+
+        /* Banner */
+        .page-banner {
+            height: 240px;
+            width: 100%;
+            background: linear-gradient(to bottom, rgba(11, 12, 16, 0.3), var(--content-bg)),
+                        url('/img/background.png') center/cover no-repeat;
+            margin-bottom: -40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 3rem;
+            color: #fff;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3f4455;
+            border-radius: 3px;
+        }
+
+        /* Responsive */
+        @media (max-width: 991px) {
+            body {
+                flex-direction: column;
+                overflow: auto;
+            }
+            .sidebar-wrapper {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .main-wrapper {
+                height: auto;
+                overflow: visible;
+            }
+            .page-banner {
+                height: 160px;
+            }
+            .content-container {
+                padding: 0 20px 40px 20px;
+            }
+            .sidebar-nav {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out;
+            }
+            .sidebar-wrapper.open .sidebar-nav {
+                max-height: 500px;
+                overflow-y: auto;
+            }
+            .mobile-toggle {
+                display: block !important;
+            }
+        }
+
+        /* Utility Override */
+        .accordion-item {
+            background-color: transparent !important;
+            border: none !important;
+            color: var(--text-main) !important;
+        }
+
+        .accordion-button {
+            padding: 10px 24px !important;
+            font-size: 0.9rem !important;
+            color: var(--text-muted) !important;
+            background-color: transparent !important;
+            border-bottom: none !important;
+            box-shadow: none !important;
+        }
+
+        .accordion-button:not(.collapsed) {
+            color: #fff !important;
+            background-color: rgba(255,255,255,0.03) !important;
+            box-shadow: none !important;
+        }
+
+        .accordion-button::after {
+            filter: invert(1) grayscale(100%) brightness(200%); /* Make arrow white */
+            opacity: 0.5;
+        }
+
+        .accordion-button:not(.collapsed)::after {
+            opacity: 1;
+        }
+
+        .accordion-body {
+            padding: 0 !important;
+            background: rgba(0,0,0,0.2) !important;
+        }
+        .accordion-body .nav-item-link {
+            padding-left: 54px; /* Indent nested items */
+            font-size: 0.85rem;
+            border-left: none;
+        }
+        .accordion-body .nav-item-link.active {
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .mobile-toggle {
+            display: none;
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        /* Existing styles overrides */
+        .docs-section {
+            scroll-margin-top: 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 40px;
+            margin-bottom: 40px;
+        }
+        
+        h2.section-title {
+            font-size: 1.8rem;
+        }
+
+        .info-box, .warning-box, .danger-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+
+        .code-snippet {
+            background: rgba(0,0,0,0.3);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body tabindex="0">
+
+    <!-- Sidebar Wrapper -->
+    <aside class="sidebar-wrapper" id="sidebar">
+        <!-- Header / Brand -->
+        <div class="sidebar-header d-flex align-items-center justify-content-between position-relative">
+            <div class="d-flex align-items-center gap-5">
+                <a href="/regras" class="text-decoration-none d-flex align-items-center">
+                    <img src="/img/ncrp.jpg" alt="NCRP" height="32" class="rounded-circle me-2">
+                    <span class="fw-bold text-white tracking-tight">NCRP Docs</span>
+                </a>
+                <a href="/" class="btn btn-sm btn-outline-secondary text-light border-0 d-flex align-items-center gap-2" style="background: rgba(255,255,255,0.05);">
+                    <i class="bi bi-house-door"></i>
+                    <span class="d-none d-md-inline">Site</span>
+                </a>
+            </div>
+            <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+
+        <!-- Search -->
+        <div class="sidebar-search mt-3">
+            <div class="search-input-wrapper">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Buscar..." id="searchInput">
+                <span class="search-shortcut">Ctrl K</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="sidebar-nav custom-scrollbar">
+            <div class="nav-category mt-2">Regras</div>
+            
+            <div class="accordion accordion-flush" id="rulesAccordion">
+                
+                <!-- Grupo: Geral -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGeral" aria-expanded="true">
+                            <i class="bi bi-book me-2 opacity-75"></i> Introdução
+                        </button>
+                    </h2>
+                    <div id="collapseGeral" class="accordion-collapse collapse show" data-bs-parent="#rulesAccordion">
+                        <div class="accordion-body">
+                            <a class="nav-item-link" href="/regras/bem-vindo.html">Bem-vindo</a>
+                            <a class="nav-item-link" href="/regras/o-que-e-roleplay.html">O que é Roleplay?</a>
+                            <a class="nav-item-link active" href="/regras/comunidade-discord.html">Comunidade Discord</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grupo: Locais -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLocais">
+                            <i class="bi bi-map me-2 opacity-75"></i> Locais Seguros
+                        </button>
+                    </h2>
+                    <div id="collapseLocais" class="accordion-collapse collapse" data-bs-parent="#rulesAccordion">
+                        <div class="accordion-body">
+                            <a class="nav-item-link" href="/regras/locais-seguros.html#safezone">Safe Zones</a>
+                            <a class="nav-item-link" href="/regras/locais-seguros.html#locais">Regras de Locais</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grupo: Combate -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCombate">
+                            <i class="bi bi-shield-exclamation me-2 opacity-75"></i> Regras de Ações
+                        </button>
+                    </h2>
+                    <div id="collapseCombate" class="accordion-collapse collapse" data-bs-parent="#rulesAccordion">
+                        <div class="accordion-body">
+                            <a class="nav-item-link" href="/regras/acoes-pvp.html#acoes-gerais">Ações Gerais</a>
+                            <a class="nav-item-link" href="/regras/acoes-pvp.html#cobrancas">Cobranças</a>
+                            <a class="nav-item-link" href="/regras/acoes-pvp.html#invasoes-faccoes">Invasões Facção</a>
+                            <a class="nav-item-link" href="/regras/acoes-pvp.html#helicrash">Helicrash</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grupo: Conduta -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConduta">
+                            <i class="bi bi-person-badge me-2 opacity-75"></i> Conduta RP
+                        </button>
+                    </h2>
+                    <div id="collapseConduta" class="accordion-collapse collapse" data-bs-parent="#rulesAccordion">
+                        <div class="accordion-body">
+                            <a class="nav-item-link" href="/regras/conduta-rp.html#vida">Amor à Vida</a>
+                            <a class="nav-item-link" href="/regras/conduta-rp.html#powergaming">Power Gaming</a>
+                            <a class="nav-item-link" href="/regras/conduta-rp.html#metagaming">Meta Gaming</a>
+                            <a class="nav-item-link" href="/regras/conduta-rp.html#darkrp">Dark RP</a>
+                            <a class="nav-item-link" href="/regras/conduta-rp.html#flaming">Flaming</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grupo: Outros -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOutros">
+                            <i class="bi bi-exclamation-triangle me-2 opacity-75"></i> Penalidades
+                        </button>
+                    </h2>
+                    <div id="collapseOutros" class="accordion-collapse collapse" data-bs-parent="#rulesAccordion">
+                        <div class="accordion-body">
+                            <a class="nav-item-link" href="/regras/penalidades.html#tabela-punicoes">Tabela de Punições</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-category">Links Úteis</div>
+            <div class="px-4">
+                <a href="https://discord.gg/jU99EekgmC" target="_blank" class="nav-item-link rounded mb-1">
+                    <i class="bi bi-discord"></i> Discord
+                </a>
+                <a href="/login" class="nav-item-link rounded">
+                    <i class="bi bi-box-arrow-in-right"></i> Login UCP
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+            <div class="d-flex align-items-center gap-2">
+                <img src="/img/ncrp.jpg" width="24" class="rounded-circle grayscale opacity-50">
+                <span>NCRP &copy; 2021</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <main class="main-wrapper">
+        
+        <!-- Banner Image Area -->
+        <div class="page-banner"></div>
+
+        <div class="content-container">
+            
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="d-flex align-items-center gap-2 text-primary mb-2 fw-bold text-uppercase" style="font-size: 0.8rem; letter-spacing: 1px;">
+                    <i class="bi bi-journal-text"></i> Introdução
+                </div>
+                <h1 class="page-title">
+                    Comunidade Discord
+                </h1>
+                <p class="lead text-muted" style="max-width: 600px;">
+                    Regras e diretrizes para nossa comunidade no Discord.
+                </p>
+                
+                <div class="d-flex gap-3 mt-4">
+                    <div class="d-flex align-items-center text-muted small">
+                        <i class="bi bi-clock me-2"></i> Atualizado em 30/01/2026
+                    </div>
+                    <div class="d-flex align-items-center text-muted small">
+                        <i class="bi bi-book-half me-2"></i> 3 min de leitura
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="docs-content-area">
+                
+                <!-- Discord Rules -->
+                <section class="docs-section pt-0">
+                    <h2 class="section-title mb-4">Regras de Convivência</h2>
+                    <p class="lead text-muted mb-5">Diretrizes para manter um ambiente saudável e respeitoso em nossa comunidade.</p>
+
+                    <div class="rules-list">
+                        <!-- Marcação Indevida -->
+                        <div class="rule-item mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <h4 class="text-white fs-5 mb-2">1. Marcação Indevida de Cargos</h4>
+                            <p class="text-muted mb-2">É proibido marcar cargos, membros ou equipes sem necessidade real ou por motivos irrelevantes.</p>
+                            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25">
+                                <i class="bi bi-exclamation-triangle me-1"></i> Punição: Mute de 12 horas (Reincidência: Banimento)
+                            </span>
+                        </div>
+
+                        <!-- Respeito entre Membros -->
+                        <div class="rule-item mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <h4 class="text-white fs-5 mb-2">2. Respeito entre Membros</h4>
+                            <p class="text-muted mb-2">Qualquer forma de desrespeito, ofensa, assédio ou ataque verbal a membros do servidor não será tolerada.</p>
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">
+                                <i class="bi bi-x-circle me-1"></i> Punição: Banimento permanente
+                            </span>
+                        </div>
+
+                        <!-- Discurso de Ódio -->
+                        <div class="rule-item mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <h4 class="text-white fs-5 mb-2">3. Discurso de Ódio e Preconceito</h4>
+                            <p class="text-muted mb-2">É terminantemente proibida qualquer apologia ao nazismo, racismo, homofobia, xenofobia ou qualquer forma de preconceito.</p>
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">
+                                <i class="bi bi-x-circle me-1"></i> Punição: Banimento permanente
+                            </span>
+                        </div>
+
+                        <!-- Comportamento Tóxico -->
+                        <div class="rule-item mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <h4 class="text-white fs-5 mb-2">4. Comportamento Tóxico</h4>
+                            <p class="text-muted mb-2">Atitudes tóxicas que prejudiquem o ambiente, como provocações excessivas, desordem intencional ou incentivo a conflitos, são proibidas.</p>
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">
+                                <i class="bi bi-x-circle me-1"></i> Punição: Banimento permanente
+                            </span>
+                        </div>
+
+                        <!-- Nomes Ofensivos -->
+                        <div class="rule-item mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <h4 class="text-white fs-5 mb-2">5. Nomes e Apelidos Ofensivos</h4>
+                            <p class="text-muted mb-2">Não é permitido utilizar nomes, nicknames ou apelidos que sejam ofensivos, discriminatórios ou inadequados.</p>
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">
+                                <i class="bi bi-x-circle me-1"></i> Punição: Banimento permanente
+                            </span>
+                        </div>
+
+                        <!-- Exploração de Sistemas -->
+                        <div class="rule-item mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <h4 class="text-white fs-5 mb-2">6. Exploração ou Burla de Sistemas</h4>
+                            <p class="text-muted mb-2">É proibido explorar falhas, bugs ou burlar qualquer sistema do servidor para obter vantagens.</p>
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">
+                                <i class="bi bi-x-circle me-1"></i> Punição: Banimento permanente
+                            </span>
+                        </div>
+
+                        <!-- Difamação -->
+                        <div class="rule-item mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <h4 class="text-white fs-5 mb-2">7. Difamação</h4>
+                            <p class="text-muted mb-2">Difamar, espalhar boatos ou acusações sem provas contra qualquer indivíduo é estritamente proibido.</p>
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">
+                                <i class="bi bi-x-circle me-1"></i> Punição: Banimento permanente
+                            </span>
+                        </div>
+
+                        <!-- Exposição Indevida -->
+                        <div class="rule-item mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <h4 class="text-white fs-5 mb-2">8. Exposição Indevida de Imagem</h4>
+                            <p class="text-muted mb-2">É proibido divulgar fotos, vídeos ou qualquer imagem de terceiros sem autorização expressa do proprietário.</p>
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">
+                                <i class="bi bi-x-circle me-1"></i> Punição: Banimento permanente
+                            </span>
+                        </div>
+
+                        <!-- Interferência em Denúncias -->
+                        <div class="rule-item mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <h4 class="text-white fs-5 mb-2">9. Interferência em Denúncias</h4>
+                            <p class="text-muted mb-2">Somente as partes envolvidas e a equipe responsável podem participar de denúncias. Interferências externas não são permitidas.</p>
+                            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25">
+                                <i class="bi bi-exclamation-triangle me-1"></i> Punição: Mute de 16 horas
+                            </span>
+                        </div>
+
+                        <!-- Uso Indevido de Canais -->
+                        <div class="rule-item mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <h4 class="text-white fs-5 mb-2">10. Uso Indevido de Canais</h4>
+                            <p class="text-muted mb-2">Conversas em canais que não são destinados a bate-papo ou discussões gerais são proibidas.</p>
+                            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25">
+                                <i class="bi bi-exclamation-triangle me-1"></i> Punição: Mute de 48 horas
+                            </span>
+                        </div>
+
+                        <!-- Falsa Identidade -->
+                        <div class="rule-item mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <h4 class="text-white fs-5 mb-2">11. Falsa Identidade Administrativa</h4>
+                            <p class="text-muted mb-2">É proibido se passar por membro da equipe, staff ou administração do servidor.</p>
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">
+                                <i class="bi bi-x-circle me-1"></i> Punição: Banimento permanente
+                            </span>
+                        </div>
+
+                        <!-- Divulgação Não Autorizada -->
+                        <div class="rule-item mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <h4 class="text-white fs-5 mb-2">12. Divulgação Não Autorizada</h4>
+                            <p class="text-muted mb-2">Qualquer tipo de divulgação só é permitida nos canais apropriados e autorizados. Divulgação fora desses canais é proibida.</p>
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">
+                                <i class="bi bi-x-circle me-1"></i> Punição: Banimento permanente
+                            </span>
+                        </div>
+
+                        <!-- Meta Gaming -->
+                        <div class="rule-item mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <h4 class="text-white fs-5 mb-2">13. Meta Gaming (MG)</h4>
+                            <p class="text-muted mb-2">Utilizar informações obtidas fora do jogo ou fora do contexto permitido dentro do RolePlay é proibido.</p>
+                            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25">
+                                <i class="bi bi-exclamation-triangle me-1"></i> Punição: Mute de 48 horas
+                            </span>
+                        </div>
+
+                        <!-- Uso Indevido de Comandos -->
+                        <div class="rule-item mb-4">
+                            <h4 class="text-white fs-5 mb-2">14. Uso Indevido de Comandos</h4>
+                            <p class="text-muted mb-2">Comandos devem ser utilizados apenas nos canais destinados para esse fim.</p>
+                            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25">
+                                <i class="bi bi-exclamation-triangle me-1"></i> Punição: Mute de 16 horas
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <h3 class="subsection-title mt-5 mb-3">Identificação Obrigatória</h3>
+                    <p>É obrigatório atualizar seu apelido no Discord seguindo o padrão:</p>
+                    <div class="code-snippet mb-3">Nome_Sobrenome | ID</div>
+                    <p>Exemplo: <span class="text-white">Mya_Kallifa | 1</span></p>
+                    <p class="small text-muted">Dica: Para saber seu ID/Passaporte, digite <span class="code-snippet">/rg</span> no jogo.</p>
+
+                    <h3 class="subsection-title mt-4 mb-3">Canais de RP no Discord</h3>
+                    <p>Os canais <span class="code-snippet">#deepweb</span>, <span class="code-snippet">#tinder</span> e <span class="code-snippet">#olx</span> são considerados <strong>In-Character (IC)</strong>. Tudo publicado lá pode ser usado dentro do jogo.</p>
+                </section>
+
+                <!-- Page Navigation -->
+                <div class="d-flex justify-content-between mt-5 pt-4 border-top border-secondary border-opacity-10">
+                    <a href="/regras/o-que-e-roleplay.html" class="btn btn-outline-secondary border-0 text-muted d-flex align-items-center">
+                        <i class="bi bi-arrow-left me-2"></i> Anterior
+                    </a>
+                    <a href="/regras/locais-seguros.html" class="btn btn-primary d-flex align-items-center">
+                        Próximo: Locais Seguros <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sidebar Toggle for Mobile
+        const sidebar = document.getElementById('sidebar');
+        
+        // Search functionality (Mockup)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+    </script>
+</body>
+</html>

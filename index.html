@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nacional City RPG - A Nova Era</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Sora:wght@300;400;500;700;800&family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --dark-bg: #020617;
+            --card-bg: rgba(30, 41, 59, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-glow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-bg);
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .bg-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: url('/img/background.png') no-repeat center center;
+            background-size: cover;
+            z-index: -3;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(to bottom, rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 0.95));
+            z-index: -2;
+        }
+
+
+
+        .bg-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            height: 80vw;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.05) 40%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding: 100px 0;
+        }
+
+        .badge-exclusive {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+
+        h1.hero-title {
+            font-weight: 900;
+            font-size: 4.5rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 50%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.hero-desc {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            line-height: 1.8;
+            margin-bottom: 2.5rem;
+            max-width: 500px;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transition: 0.5s;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(59, 130, 246, 0.1);
+        }
+
+        .glass-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: #60a5fa;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Buttons */
+        .btn-glow {
+            position: relative;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-glow:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+            color: white;
+        }
+
+        .btn-outline-custom {
+            padding: 16px 32px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            color: #94a3b8;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-custom:hover {
+            border-color: #fff;
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* 3D Float Animation */
+        @keyframes float-custom {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        .hero-image-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-image {
+            animation: float-custom 6s ease-in-out infinite;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .image-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%);
+            filter: blur(40px);
+            z-index: -1;
+            animation: pulse 4s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.5; }
+        }
+
+        /* Stats Counter */
+        .stat-item {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to bottom, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 991px) {
+            h1.hero-title { font-size: 3rem; }
+            .hero-section { text-align: center; padding-top: 60px; }
+            .hero-desc { margin: 0 auto 2.5rem; }
+            .hero-image { margin-top: 3rem; max-width: 80%; }
+        }
+
+        .hover-scale {
+            transition: transform 0.2s ease, color 0.2s ease;
+            display: inline-block;
+        }
+        .hover-scale:hover {
+            transform: scale(1.2);
+            color: var(--primary) !important;
+        }
+
+        /* Navbar */
+        .navbar-glass {
+            background: rgba(2, 6, 23, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand img {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover img {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+
+        .nav-link {
+            color: #94a3b8 !important;
+            font-weight: 500;
+            margin-left: 1rem;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #fff !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background: var(--primary);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .btn-login-animated {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 8px 24px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            animation: pulse-blue 2s infinite;
+            display: inline-block;
+        }
+        .btn-login-animated:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.8);
+            color: white;
+        }
+        @keyframes pulse-blue {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-glass">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="/img/ncrp.jpg" alt="NCRP" height="50" class="rounded-circle shadow-lg">
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://discord.gg/jU99EekgmC">Discord</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/regras">Regras</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/comojogar">Como Jogar</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn-login-animated text-decoration-none" href="/login">LOGIN</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Background Elements -->
+    <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
+    <div class="bg-glow"></div>
+
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                
+                <!-- Text Content -->
+                <div class="col-lg-6 z-2">
+                    
+                    <h1 class="hero-title">
+                        Crie sua <br>
+                        <span class="text-gradient">Lenda Urbana</span>
+                    </h1>
+                    
+                    <p class="hero-desc">
+                        Entre no NCRP e viva uma experiência de Roleplay definitiva. Economia realista, sistema de corporações dinâmico e um mundo onde suas escolhas definem seu futuro.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-3 mb-4 justify-content-lg-start justify-content-center">
+                        <a href="/comojogar" class="btn-glow">
+                            <i class="bi bi-play-fill me-2"></i>JOGAR AGORA
+                        </a>
+                        <div class="btn-outline-custom" style="cursor: default; opacity: 0.7;">
+                            <i class="bi bi-windows me-2"></i>Launcher (Em breve)
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <!-- 3D Image Content -->
+                <div class="col-lg-6 text-center mt-4 mt-lg-0">
+                    <div class="hero-image-wrapper">
+                        <div class="image-glow"></div>
+                        <img src="/img/img3dlauncher.png" alt="NCRP Interface" class="hero-image img-fluid">
+                        
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Features Grid -->
+            <div class="row g-4 mt-3 pt-3">
+                <div class="col-md-4">
+                    <div class="glass-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="bi bi-diagram-3-fill"></i>
+                        </div>
+                        <h4 class="fw-bold text-white mb-2">Organizações</h4>
+                        <p class="text-secondary mb-0">Sistema complexo de hierarquia. Seja o Chefe da Máfia ou o Comandante da Polícia com cargos e patentes reais.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="glass-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+                        <h4 class="fw-bold text-white mb-2">Economia Viva</h4>
+                        <p class="text-secondary mb-0">Mercado dinâmico, inflação, impostos e sistema bancário avançado. Cada centavo conta na sua jornada.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="glass-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="bi bi-controller"></i>
+                        </div>
+                        <h4 class="fw-bold text-white mb-2">Roleplay Puro</h4>
+                        <p class="text-secondary mb-0">Foco total na interpretação. Inventário visual, propriedades exclusivas e interações imersivas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="text-center mt-3 pt-3 pb-4 border-top border-white border-opacity-10">
+                <div class="mb-3">
+                    <a href="https://youtube.com/@nacionalcityrp8090?si=-8QJch7PT5njWdca" target="_blank" class="text-white text-decoration-none mx-2 fs-4 hover-scale">
+                        <i class="bi bi-youtube"></i>
+                    </a>
+                    <a href="https://www.instagram.com/ncroleplay?igsh=MTlpa3VrbTk5dWlnMg==" target="_blank" class="text-white text-decoration-none mx-2 fs-4 hover-scale">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                </div>
+                <p class="text-secondary small mb-0">&copy; 2021-2025 Nacional City RolePlay. Todos os direitos reservados.</p>
+            </footer>
+
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar Scroll Behavior
+        let lastScrollTop = 0;
+        const navbar = document.querySelector('.navbar');
+
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // Scroll Down
+                navbar.classList.add('navbar-hidden');
+            } else {
+                // Scroll Up
+                navbar.classList.remove('navbar-hidden');
+            }
+            lastScrollTop = scrollTop;
+        });
+    </script>
+</body>
+</html>

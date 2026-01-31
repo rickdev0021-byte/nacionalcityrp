@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status do Personagem - NCRP UCP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div id="navbar-container"></div>
+
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom border-white border-opacity-10">
+                <h1 class="h2 text-white fw-bold">Status do Personagem</h1>
+            </div>
+
+            <div class="row g-4">
+                    <!-- Profile Card -->
+                    <div class="col-12 col-xl-4">
+                        <div class="glass-panel h-100 p-4">
+                            <div class="text-center">
+                                <div class="mb-4 position-relative d-inline-block">
+                                    <div class="position-absolute top-0 start-50 translate-middle-x w-100 h-100 bg-primary opacity-25 blur-xl rounded-circle" style="filter: blur(40px);"></div>
+                                    <img id="char-skin" src="/img/vinux-fundo.png" class="img-fluid rounded-3 shadow-lg position-relative" style="max-height: 360px; border: 1px solid rgba(255,255,255,0.1);" alt="Skin">
+                                    <span class="position-absolute bottom-0 end-0 badge rounded-pill bg-primary fs-6 m-2 shadow" id="char-level">Lvl 0</span>
+                                </div>
+                                <h3 class="fw-bold mb-1 text-white" id="char-name">Carregando...</h3>
+                                <div class="d-flex justify-content-center gap-2 mb-4">
+                                    <span class="badge bg-secondary" id="char-status">Offline</span>
+                                    <span class="badge bg-success" id="char-money">$0</span>
+                                </div>
+                                
+                                <div class="row text-start g-3 mt-2">
+                                    <div class="col-6">
+                                        <div class="p-3 rounded-3 bg-surface h-100">
+                                            <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Idade</small>
+                                            <span class="fw-bold text-white" id="char-age">0 anos</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 rounded-3 bg-surface h-100">
+                                            <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Sexo</small>
+                                            <span class="fw-bold text-white" id="char-sex">Masculino</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 rounded-3 bg-surface h-100">
+                                            <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">RG</small>
+                                            <span class="fw-bold text-white" id="char-rg">000000</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 rounded-3 bg-surface h-100">
+                                            <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Último Login</small>
+                                            <span class="fw-bold text-white" id="char-last-seen">Nunca</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Weapons & Skills -->
+                    <div class="col-12 col-xl-8">
+                        <div class="glass-panel mb-4">
+                            <div class="card-header border-0 pt-4 px-4 pb-0">
+                                <h5 class="mb-0 fw-bold text-white"><i class="bi bi-crosshair me-2 text-danger"></i>Armamentos</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row g-3" id="weapons-grid">
+                                    <div class="col-12 text-center py-5 text-muted">
+                                        <i class="bi bi-slash-circle fs-1 d-block mb-2 opacity-50"></i>
+                                        Nenhuma arma equipada
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Info (Placeholder for Org, Job, etc.) -->
+                        <div class="glass-panel">
+                            <div class="card-header border-0 pt-4 px-4 pb-0">
+                                <h5 class="mb-0 fw-bold text-white"><i class="bi bi-briefcase me-2 text-info"></i>Informações Adicionais</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <div class="p-3 rounded-3 bg-surface border border-white border-opacity-10 h-100">
+                                            <h6 class="text-muted mb-2 text-uppercase small fw-bold">Organização</h6>
+                                            <p class="h5 mb-0 fw-bold text-white" id="char-org">Civil</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="p-3 rounded-3 bg-surface border border-white border-opacity-10 h-100">
+                                            <h6 class="text-muted mb-2 text-uppercase small fw-bold">Emprego</h6>
+                                            <p class="h5 mb-0 fw-bold text-white" id="char-job">Desempregado</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="p-3 rounded-3 bg-surface border border-white border-opacity-10 h-100">
+                                            <h6 class="text-muted mb-2 text-uppercase small fw-bold">Horas Jogadas</h6>
+                                            <p class="h5 mb-0 fw-bold text-white" id="char-hours">0 horas</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { auth } from './js/auth.js';
+        import { api } from './js/api.js';
+        import { renderSidebar, renderNavbar, initTheme } from './js/components.js';
+        import { showToast } from './js/app.js';
+
+        // Init Theme
+        initTheme();
+
+        auth.checkAuth().then(() => {
+             document.getElementById('sidebar-container').innerHTML = renderSidebar('status');
+        });
+        
+        document.getElementById('navbar-container').innerHTML = renderNavbar('Status');
+        document.getElementById('sidebar-container').innerHTML = renderSidebar('status');
+
+        // Setup Logout
+        setTimeout(() => {
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    auth.logout();
+                });
+            }
+        }, 100);
+
+        async function loadStatus() {
+            try {
+                const response = await api.get('/status');
+                if (response.ok) {
+                    const data = response.data;
+                    
+                    document.getElementById('char-name').textContent = data.nome;
+                    if (data.profile_photo) {
+                        document.getElementById('char-skin').src = data.profile_photo;
+                        document.getElementById('char-skin').style.objectFit = 'cover';
+                    } else {
+                        document.getElementById('char-skin').src = `https://raw.githubusercontent.com/Akaexus/samp-skin-screens/master/skins/${data.skin}.png`;
+                    }
+                    document.getElementById('char-skin').onerror = function() {
+                        this.src = '/img/vinux-fundo.png';
+                    };
+                    document.getElementById('char-level').textContent = `Lvl ${data.level}`;
+                    document.getElementById('char-money').textContent = `R$ ${(data.dinheiro || 0).toLocaleString('pt-BR')}`;
+                    document.getElementById('char-age').textContent = `${data.idade} anos`;
+                    
+                    // Fix Sex display (string check)
+                    const sexStr = String(data.sexo || '').toLowerCase();
+                    document.getElementById('char-sex').textContent = (sexStr === 'masculino' || sexStr === '1') ? 'Masculino' : 'Feminino';
+                    
+                    // RG shows Fixed ID
+                    document.getElementById('char-rg').textContent = data.id || 'N/A';
+                    
+                    // Job & Org
+                    document.getElementById('char-org').textContent = data.org || 'Civil';
+                    document.getElementById('char-job').textContent = data.emprego || 'Desempregado';
+
+                    document.getElementById('char-status').textContent = data.online ? 'Online' : 'Offline';
+                    document.getElementById('char-status').className = `badge bg-${data.online ? 'success' : 'secondary'}`;
+                    
+                    const lastLoginDate = data.ultimo_login || data.last_seen;
+                    document.getElementById('char-last-seen').textContent = lastLoginDate ? new Date(lastLoginDate).toLocaleString() : 'Nunca';
+
+                    const minutesPlayed = data.minutes_played || 0;
+                    const hoursPlayed = Math.floor(minutesPlayed / 60);
+                    const hoursElement = document.getElementById('char-hours');
+                    if (hoursElement) {
+                        hoursElement.textContent = `${hoursPlayed} horas`;
+                    }
+
+                    // Render Weapons
+                    const weaponsGrid = document.getElementById('weapons-grid');
+                    if (data.armas && data.armas.length > 0) {
+                        weaponsGrid.innerHTML = data.armas.map(w => `
+                            <div class="col-6 col-sm-4 col-md-3">
+                                <div class="card bg-dark border-0 h-100 text-center p-2 weapon-card">
+                                    <img src="/img/weapons/${w.id || w}.png" class="img-fluid mb-2" alt="Weapon" style="height: 80px; object-fit: contain;">
+                                    <small class="d-block text-muted">ID: ${w.id || w}</small>
+                                    ${w.ammo ? `<span class="badge bg-secondary">${w.ammo} balas</span>` : ''}
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+                showToast('Erro ao carregar status.', 'danger');
+            }
+        }
+
+        loadStatus();
+    </script>
+</body>
+</html>

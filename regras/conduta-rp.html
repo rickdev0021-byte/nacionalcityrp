@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conduta RP - Regras NCRP</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary: #8b5cf6; /* Roxo estilo GitBook/Hype */
+            --primary-hover: #7c3aed;
+            --sidebar-bg: #14161f;
+            --content-bg: #0b0c10;
+            --border-color: #2d313f;
+            --text-main: #e6ecf1;
+            --text-muted: #cbd5e1;
+            --card-bg: #1e2128;
+            --accent: #06b6d4;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--content-bg);
+            color: var(--text-main);
+            overflow: hidden; /* Prevent body scroll, handle in split view */
+            height: 100vh;
+            display: flex;
+            margin: 0;
+        }
+
+        /* Sidebar Layout */
+        .sidebar-wrapper {
+            width: 300px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            flex-shrink: 0;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-search {
+            padding: 0 24px 16px 24px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: #000000;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 12px 8px 36px;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .search-shortcut {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #2d313f;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #3f4455;
+        }
+
+        /* User Contrast Fixes */
+        .rule-item h4, .rule-item h5, 
+        .rule-card h4, .rule-card h5,
+        .category-card h4, .category-card h5,
+        .danger-box h4, .danger-box h5,
+        .section-title, .subsection-title {
+            color: #60a5fa !important; /* Blue Title */
+        }
+        
+        .rule-item p, .rule-card p, 
+        .category-card p, .info-box p, 
+        .danger-box p, .alert-dark,
+        .lead, .text-muted,
+        .docs-section p, .docs-section li {
+            color: #ffffff !important; /* White Description */
+        }
+        
+        /* Fix for alert-dark in dark mode */
+        .alert-dark {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            border-color: var(--border-color) !important;
+            color: #fff !important;
+        }
+
+        .sidebar-nav {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 16px 0;
+        }
+
+        .sidebar-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Nav Items Styled like GitBook */
+        .nav-category {
+            padding: 8px 24px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            margin-top: 16px;
+        }
+
+        .nav-item-link {
+            display: flex;
+            align-items: center;
+            padding: 8px 24px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-left: 3px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .nav-item-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .nav-item-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            background: linear-gradient(90deg, rgba(139, 92, 246, 0.1), transparent);
+            font-weight: 500;
+        }
+
+        .nav-item-link i {
+            width: 20px;
+            margin-right: 10px;
+            opacity: 0.7;
+        }
+
+        /* Main Content Layout */
+        .main-wrapper {
+            flex-grow: 1;
+            height: 100vh;
+            overflow-y: auto;
+            position: relative;
+            background-color: var(--content-bg);
+        }
+
+        .content-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 40px 60px 40px;
+        }
+
+        /* Banner */
+        .page-banner {
+            height: 240px;
+            width: 100%;
+            background: linear-gradient(to bottom, rgba(11, 12, 16, 0.3), var(--content-bg)),
+                        url('/img/background.png') center/cover no-repeat;
+            margin-bottom: -40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 3rem;
+            color: #fff;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3f4455;
+            border-radius: 3px;
+        }
+
+        /* Responsive */
+        @media (max-width: 991px) {
+            body {
+                flex-direction: column;
+                overflow: auto;
+            }
+            .sidebar-wrapper {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .main-wrapper {
+                height: auto;
+                overflow: visible;
+            }
+            .page-banner {
+                height: 160px;
+            }
+            .content-container {
+                padding: 0 20px 40px 20px;
+            }
+            .sidebar-nav {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out;
+            }
+            .sidebar-wrapper.open .sidebar-nav {
+                max-height: 500px;
+                overflow-y: auto;
+            }
+            .mobile-toggle {
+                display: block !important;
+            }
+        }
+
+        /* Utility Override */
+        .accordion-item {
+            background-color: transparent !important;
+            border: none !important;
+            color: var(--text-main) !important;
+        }
+
+        .accordion-button {
+            padding: 10px 24px !important;
+            font-size: 0.9rem !important;
+            color: var(--text-muted) !important;
+            background-color: transparent !important;
+            border-bottom: none !important;
+            box-shadow: none !important;
+        }
+
+        .accordion-button:not(.collapsed) {
+            color: #fff !important;
+            background-color: rgba(255,255,255,0.03) !important;
+            box-shadow: none !important;
+        }
+
+        .accordion-button::after {
+            filter: invert(1) grayscale(100%) brightness(200%); /* Make arrow white */
+            opacity: 0.5;
+        }
+
+        .accordion-button:not(.collapsed)::after {
+            opacity: 1;
+        }
+
+        .accordion-body {
+            padding: 0 !important;
+            background: rgba(0,0,0,0.2) !important;
+        }
+        .accordion-body .nav-item-link {
+            padding-left: 54px; /* Indent nested items */
+            font-size: 0.85rem;
+            border-left: none;
+        }
+        .accordion-body .nav-item-link.active {
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .mobile-toggle {
+            display: none;
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        /* Existing styles overrides */
+        .docs-section {
+            scroll-margin-top: 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 40px;
+            margin-bottom: 40px;
+        }
+        
+        h2.section-title {
+            font-size: 1.8rem;
+        }
+
+        .rule-card, .info-box, .warning-box, .danger-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+
+        .code-snippet {
+            background: rgba(0,0,0,0.3);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body tabindex="0">
+
+    <!-- Sidebar Wrapper -->
+    <aside class="sidebar-wrapper" id="sidebar">
+        <!-- Header / Brand -->
+        <div class="sidebar-header d-flex align-items-center justify-content-between position-relative">
+            <div class="d-flex align-items-center gap-5">
+                <a href="/regras" class="text-decoration-none d-flex align-items-center">
+                    <img src="/img/ncrp.jpg" alt="NCRP" height="32" class="rounded-circle me-2">
+                    <span class="fw-bold text-white tracking-tight">NCRP Docs</span>
+                </a>
+                <a href="/" class="btn btn-sm btn-outline-secondary text-light border-0 d-flex align-items-center gap-2" style="background: rgba(255,255,255,0.05);">
+                    <i class="bi bi-house-door"></i>
+                    <span class="d-none d-md-inline">Site</span>
+                </a>
+            </div>
+            <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+
+        <!-- Search -->
+        <div class="sidebar-search mt-3">
+            <div class="search-input-wrapper">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Buscar..." id="searchInput">
+                <span class="search-shortcut">Ctrl K</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="sidebar-nav custom-scrollbar">
+            <div class="nav-category mt-2">Regras</div>
+            
+            <div class="accordion accordion-flush" id="rulesAccordion">
+                
+                <!-- Grupo: Geral -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGeral">
+                            <i class="bi bi-book me-2 opacity-75"></i> Introdução
+                        </button>
+                    </h2>
+                    <div id="collapseGeral" class="accordion-collapse collapse" data-bs-parent="#rulesAccordion">
+                        <div class="accordion-body">
+                            <a class="nav-item-link" href="/regras/bem-vindo.html">Bem-vindo</a>
+                            <a class="nav-item-link" href="/regras/o-que-e-roleplay.html">O que é Roleplay?</a>
+                            <a class="nav-item-link" href="/regras/comunidade-discord.html">Comunidade Discord</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grupo: Locais -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLocais">
+                            <i class="bi bi-map me-2 opacity-75"></i> Locais Seguros
+                        </button>
+                    </h2>
+                    <div id="collapseLocais" class="accordion-collapse collapse" data-bs-parent="#rulesAccordion">
+                        <div class="accordion-body">
+                            <a class="nav-item-link" href="/regras/locais-seguros.html#safezone">Safe Zones</a>
+                            <a class="nav-item-link" href="/regras/locais-seguros.html#locais">Regras de Locais</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grupo: Combate -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCombate">
+                            <i class="bi bi-shield-exclamation me-2 opacity-75"></i> Regras de Ações
+                        </button>
+                    </h2>
+                    <div id="collapseCombate" class="accordion-collapse collapse" data-bs-parent="#rulesAccordion">
+                        <div class="accordion-body">
+                            <a class="nav-item-link" href="/regras/acoes-pvp.html#acoes-gerais">Ações Gerais</a>
+                            <a class="nav-item-link" href="/regras/acoes-pvp.html#cobrancas">Cobranças</a>
+                            <a class="nav-item-link" href="/regras/acoes-pvp.html#invasoes-faccoes">Invasões Facção</a>
+                            <a class="nav-item-link" href="/regras/acoes-pvp.html#helicrash">Helicrash</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grupo: Conduta -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConduta" aria-expanded="true">
+                            <i class="bi bi-person-badge me-2 opacity-75"></i> Conduta RP
+                        </button>
+                    </h2>
+                    <div id="collapseConduta" class="accordion-collapse collapse show" data-bs-parent="#rulesAccordion">
+                        <div class="accordion-body">
+                            <a class="nav-item-link" href="#vida">Amor à Vida</a>
+                            <a class="nav-item-link" href="#powergaming">Power Gaming</a>
+                            <a class="nav-item-link" href="#metagaming">Meta Gaming</a>
+                            <a class="nav-item-link" href="#darkrp">Dark RP</a>
+                            <a class="nav-item-link" href="#flaming">Flaming</a>
+                            <a class="nav-item-link" href="#glossario">Glossário RP</a>
+                            <a class="nav-item-link" href="#comandos">Comandos</a>
+                            <a class="nav-item-link" href="#convivencia">Convivência</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grupo: Outros -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOutros">
+                            <i class="bi bi-exclamation-triangle me-2 opacity-75"></i> Penalidades
+                        </button>
+                    </h2>
+                    <div id="collapseOutros" class="accordion-collapse collapse" data-bs-parent="#rulesAccordion">
+                        <div class="accordion-body">
+                            <a class="nav-item-link" href="/regras/penalidades.html#tabela-punicoes">Tabela de Punições</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-category">Links Úteis</div>
+            <div class="px-4">
+                <a href="https://discord.gg/jU99EekgmC" target="_blank" class="nav-item-link rounded mb-1">
+                    <i class="bi bi-discord"></i> Discord
+                </a>
+                <a href="/login" class="nav-item-link rounded">
+                    <i class="bi bi-box-arrow-in-right"></i> Login UCP
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+            <div class="d-flex align-items-center gap-2">
+                <img src="/img/ncrp.jpg" width="24" class="rounded-circle grayscale opacity-50">
+                <span>NCRP &copy; 2021</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <main class="main-wrapper">
+        
+        <!-- Banner Image Area -->
+        <div class="page-banner"></div>
+
+        <div class="content-container">
+            
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="d-flex align-items-center gap-2 text-primary mb-2 fw-bold text-uppercase" style="font-size: 0.8rem; letter-spacing: 1px;">
+                    <i class="bi bi-person-badge"></i> Conduta RP
+                </div>
+                <h1 class="page-title">
+                    Comportamento
+                </h1>
+                <p class="lead text-muted" style="max-width: 600px;">
+                    Diretrizes sobre como agir, reagir e interpretar seu personagem.
+                </p>
+                
+                <div class="d-flex gap-3 mt-4">
+                    <div class="d-flex align-items-center text-muted small">
+                        <i class="bi bi-clock me-2"></i> Atualizado em 30/01/2026
+                    </div>
+                    <div class="d-flex align-items-center text-muted small">
+                        <i class="bi bi-book-half me-2"></i> 5 min de leitura
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="docs-content-area">
+                
+                <!-- Amor à Vida -->
+                <section id="vida" class="docs-section pt-0">
+                    <h2 class="section-title">Amor à Vida</h2>
+                    <p>Você deve valorizar a vida do seu personagem como se fosse única.</p>
+                    <ul>
+                        <li>Não reaja se tiver uma arma apontada para sua cabeça (se estiver em desvantagem).</li>
+                        <li>Não se jogue de lugares altos propositalmente.</li>
+                        <li>Não provoque gangues/polícia se estiver sozinho e desarmado.</li>
+                    </ul>
+                </section>
+
+                <!-- Power Gaming & Meta Gaming -->
+                <section id="powergaming" class="docs-section">
+                    <h2 class="section-title">Power Gaming (PG)</h2>
+                    <p>É a prática de abusar das mecânicas do jogo para realizar atos impossíveis na vida real.</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-x-circle text-danger me-2"></i>Saltar de montanhas com carros esportivos e continuar dirigindo.</li>
+                        <li class="mb-2"><i class="bi bi-x-circle text-danger me-2"></i>Falar no rádio/celular enquanto está algemado ou morto.</li>
+                        <li class="mb-2"><i class="bi bi-x-circle text-danger me-2"></i>Guardar armas longas (fuzis) sem ter uma mochila ou porta-malas próximo.</li>
+                    </ul>
+                </section>
+
+                <section id="metagaming" class="docs-section">
+                    <h2 class="section-title">Meta Gaming (MG)</h2>
+                    <p>Utilizar informações externas (Out of Character - OOC) para se beneficiar dentro do jogo (In Character - IC).</p>
+                    <div class="alert alert-dark border border-secondary">
+                        <strong>Exemplos:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Assistir a live de um streamer para saber sua localização (Stream Sniping).</li>
+                            <li>Reconhecer alguém pela voz ou ID quando a pessoa está mascarada.</li>
+                            <li>Usar Discord para passar call durante uma ação PvP.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Dark RP & Power RP -->
+                <section id="darkrp" class="docs-section">
+                    <h2 class="section-title">Dark RP & Power RP</h2>
+                    
+                    <div class="danger-box">
+                        <h4 class="alert-heading"><i class="bi bi-slash-circle me-2"></i>Dark RP é Proibido</h4>
+                        <p>Contextos pesados como tortura explícita, assédio, estupro, racismo ou qualquer fobia são estritamente proibidos e passíveis de <strong>Banimento Permanente</strong>.</p>
+                        <hr>
+                        <p class="mb-0 small">Também é proibido desrespeitar cadáveres (mijar, cuspir, colocar fogo).</p>
+                    </div>
+
+                    <h3 class="subsection-title mt-4">Power RP</h3>
+                    <p>Forçar uma ação sobre outro jogador sem dar chance de reação ou escolha.</p>
+                    <ul>
+                        <li>Forçar alguém a cortar um membro do corpo.</li>
+                        <li>Obrigar alguém a fazer ações humilhantes que fujam do contexto saudável.</li>
+                    </ul>
+                </section>
+
+                <!-- Flaming & Anti-RP -->
+                <section id="flaming" class="docs-section">
+                    <h2 class="section-title">Flaming & Anti-RP</h2>
+                    
+                    <h3 class="subsection-title">Flaming</h3>
+                    <p>Incitar ódio, brigas ou toxicidade no chat OOC ou IC. Evite inflamar situações perdidas.</p>
+
+                    <h3 class="subsection-title mt-4">Anti-RP</h3>
+                    <p>Não agir de acordo com o personagem.</p>
+                    <ul>
+                        <li>Chamar alguém pelo nome que aparece em cima da cabeça sem ter sido apresentado.</li>
+                        <li>Empinar moto, fazer "borrachão" ou buzinar sem motivo na frente da Delegacia (Cop Baiting).</li>
+                        <li>Usar binds/macros para obter vantagem em ações.</li>
+                    </ul>
+                </section>
+
+                <!-- Glossário de Termos RP -->
+                <section id="glossario" class="docs-section">
+                    <h2 class="section-title">Glossário de Termos RP</h2>
+                    <p>Conceitos fundamentais que todo jogador deve dominar.</p>
+                    
+                    <div class="row g-3">
+                        <!-- Morte & Combate -->
+                        <div class="col-12 mb-2"><h5 class="text-white border-bottom border-secondary pb-2">Morte & Combate</h5></div>
+
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-danger border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-person-x-fill me-2 opacity-75"></i>Character Kill (CK)</h5>
+                                <p class="mb-0 small">Morte permanente do personagem. Perda total da história. Novo personagem obrigatório. Somente com motivo RP válido ou aprovação staff.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-danger border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-bandaid-fill me-2 opacity-75"></i>Player Kill (PK)</h5>
+                                <p class="mb-0 small">Morte temporária. Esquecimento parcial do ocorrido. Não retornar à ação. Proibido vingança imediata.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-danger border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-arrow-left-right me-2 opacity-75"></i>CK vs PK</h5>
+                                <p class="mb-0 small"><strong>CK:</strong> Morte definitiva.<br><strong>PK:</strong> Morte temporária.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-danger border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-arrow-repeat me-2 opacity-75"></i>Revenge Kill (RK)</h5>
+                                <p class="mb-0 small">Voltar à ação para se vingar após morrer. Proibido em qualquer circunstância.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-danger border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-box-arrow-right me-2 opacity-75"></i>Combat Logging (CL)</h5>
+                                <p class="mb-0 small">Sair do jogo para evitar consequências (prisão, morte, assalto).</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-danger border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-crosshair me-2 opacity-75"></i>Kill on Sight (KOS)</h5>
+                                <p class="mb-0 small">"Matar à vista". Proibido matar alguém só por ser policial ou rival sem motivo RP prévio.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-danger border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-car-front-fill me-2 opacity-75"></i>Drive-By (DB)</h5>
+                                <p class="mb-0 small">Motorista ou passageiro atirando pela janela do veículo. Violação sujeita a punição.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-danger border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-people-fill me-2 opacity-75"></i>Faction Kill (FK)</h5>
+                                <p class="mb-0 small">"Morte da Facção". Execução por traição (X-9). Esquece TODOS os RPs feitos com a facção.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-danger border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-exclamation-octagon-fill me-2 opacity-75"></i>Random Deathmatch (RDM)</h5>
+                                <p class="mb-0 small">Matar ou atacar outro player sem qualquer motivo, contexto ou interação RP prévia.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-danger border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-lightning-fill me-2 opacity-75"></i>Hit Kill (HK)</h5>
+                                <p class="mb-0 small">Matar um player instantaneamente, sem chance de reação, RP ou defesa.</p>
+                            </div>
+                        </div>
+
+                        <!-- Comportamento -->
+                        <div class="col-12 mt-4 mb-2"><h5 class="text-white border-bottom border-secondary pb-2">Comportamento & Interpretação</h5></div>
+
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-primary border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-emoji-dizzy-fill me-2 opacity-75"></i>Fail RP (FRP)</h5>
+                                <p class="mb-0 small">Quebra total da interpretação do personagem.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-primary border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-chat-dots-fill me-2 opacity-75"></i>IC / OOC</h5>
+                                <p class="mb-0 small"><strong>IC:</strong> In Character (Dentro do personagem).<br><strong>OOC:</strong> Out of Character (Fora do personagem).</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-primary border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-speedometer me-2 opacity-75"></i>Non-RP Drive (NRD)</h5>
+                                <p class="mb-0 small">Dirigir de forma irreal: subir escadas, pular rampas, ignorar colisões graves.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-primary border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-egg-fill me-2 opacity-75"></i>Newbie Jump (NJ)</h5>
+                                <p class="mb-0 small">Erros básicos de novato. Tolerância inicial, staff deve orientar. Abuso gera punição.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-primary border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-person-bounding-box me-2 opacity-75"></i>Character Jump (CJ)</h5>
+                                <p class="mb-0 small">Trocar personalidade, história ou comportamento repentinamente sem RP.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-primary border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-arrow-up-circle-fill me-2 opacity-75"></i>Bunny-Hop (BH)</h5>
+                                <p class="mb-0 small">Ficar pulando para correr mais rápido ou fugir. Proibido.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-primary border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-building-fill me-2 opacity-75"></i>Não Rol do Ambiente (NRA)</h5>
+                                <p class="mb-0 small">Ignorar o ambiente: ex. ficar armado na frente da delegacia ou em locais públicos.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-primary border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-controller me-2 opacity-75"></i>In-Game Focus (IFP)</h5>
+                                <p class="mb-0 small">Agir com mentalidade de player (ganhar/perder) em vez de personagem (viver a história).</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-primary border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-shuffle me-2 opacity-75"></i>Mix (MIX)</h5>
+                                <p class="mb-0 small">Usar chat IC para falar OOC ou usar gírias de internet (ex: "blz", "lol") na fala/chat IC.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-primary border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-file-earmark-text-fill me-2 opacity-75"></i>R-12 (Consistência)</h5>
+                                <p class="mb-0 small">Manter a linha de desenvolvimento. Ex: Policial iniciante com carros de luxo sem explicar a origem é proibido.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-primary border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-trophy-fill me-2 opacity-75"></i>RPFW / RPFTW</h5>
+                                <p class="mb-0 small">"Roleplay For The Win". Atuar apenas para ganhar. Na vida real, nem sempre se ganha.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-primary border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-camera-video-fill me-2 opacity-75"></i>Stream Sniping</h5>
+                                <p class="mb-0 small">Usar live de outro jogador para obter vantagem IC (localização, informações).</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rule-card h-100 border-start border-4 border-primary border-opacity-75">
+                                <h5 class="mb-2"><i class="bi bi-cone-striped me-2 opacity-75"></i>Cop Bait</h5>
+                                <p class="mb-0 small">Provocar policiais sem motivo RP apenas para iniciar perseguição.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Comandos de Interpretação -->
+                <section id="comandos" class="docs-section">
+                    <h2 class="section-title">Comandos de Interpretação</h2>
+                    <p>Ferramentas essenciais para simular ações não visíveis.</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="p-3 border border-primary border-opacity-50 rounded bg-dark bg-opacity-25 h-100">
+                                <h4 class="text-primary mb-2">/me (Ação)</h4>
+                                <p class="text-white mb-2">Descreve uma ação física do seu personagem.</p>
+                                <div class="code-snippet text-white">/me segura um copo de água com a mão trêmula.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border border-info border-opacity-50 rounded bg-dark bg-opacity-25 h-100">
+                                <h4 class="text-info mb-2">/do (Ambiente/Estado)</h4>
+                                <p class="text-white mb-2">Descreve o estado de algo, do ambiente ou confirmação.</p>
+                                <div class="code-snippet text-white">/do O copo estaria cheio?</div>
+                                <div class="code-snippet text-white mt-1">/do Sim, transbordando.</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Cortesia Comum -->
+                <section id="convivencia" class="docs-section">
+                    <h2 class="section-title">Cortesia Comum & Convivência</h2>
+                    
+                    <div class="rule-card">
+                        <h4 class="text-white mb-3">Respeito Mútuo</h4>
+                        <p class="mb-3">Seja gentil e pense duas vezes antes de escrever. A staff está para ajudar, não precisa ser grosseiro.</p>
+                        
+                        <h5 class="text-white mt-4 mb-2">Quebra de Cortesia:</h5>
+                        <ul class="mb-0">
+                            <li class="mb-2">Não ter compromisso com a evolução do RP.</li>
+                            <li class="mb-2">Fechar o jogo para evitar prisão (mesmo que ache injusta).</li>
+                            <li class="mb-2">Recusar-se a seguir RP até um admin chegar.</li>
+                            <li class="mb-2">Discriminação ou falta de respeito com qualquer membro.</li>
+                            <li class="mb-2">Usar chat OOC para provocar, persuadir ou fazer comentários desnecessários ("Nossa que RP tosco", "Viram aquele carro?").</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Page Navigation -->
+                <div class="d-flex justify-content-between mt-5 pt-4 border-top border-secondary border-opacity-10">
+                    <a href="/regras/acoes-pvp.html" class="btn btn-outline-secondary border-0 text-muted d-flex align-items-center">
+                        <i class="bi bi-arrow-left me-2"></i> Anterior
+                    </a>
+                    <a href="/regras/penalidades.html" class="btn btn-primary d-flex align-items-center">
+                        Próximo: Penalidades <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sidebar Toggle for Mobile
+        const sidebar = document.getElementById('sidebar');
+        
+        // Search functionality (Mockup)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+    </script>
+</body>
+</html>
