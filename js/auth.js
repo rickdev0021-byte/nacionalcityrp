@@ -35,7 +35,7 @@ export const auth = {
     },
 
     async checkAuth() {
-        const isLoginPage = window.location.pathname.includes('login.html');
+        const isLoginPage = window.location.pathname.includes('login');
         const user = this.getUser();
 
         if (user) {

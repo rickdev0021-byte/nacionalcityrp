@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja Oficial - NCRP UCP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+    <div id="sidebar-container"></div>
+    <div class="main-content">
+        <div id="navbar-container"></div>
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom border-white border-opacity-10">
+                <h1 class="h2 text-white fw-bold">Loja</h1>
+                <div class="text-end">
+                    <div class="small text-muted text-uppercase fw-bold">Saldo atual</div>
+                    <div class="fw-bold fs-5">
+                        <span class="text-success">$ <span id="saldo-dinheiro">0</span></span>
+                        <span class="mx-2 text-muted">|</span>
+                        <span class="text-warning"><i class="bi bi-gem me-1"></i><span id="saldo-rubys">0</span> Rubys</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel p-2 mb-4 d-inline-block">
+                <ul class="nav nav-pills" id="storeTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active rounded-3 px-4" id="dinheiro-tab" data-bs-toggle="pill" data-bs-target="#dinheiro-pane" type="button" role="tab">
+                            <i class="bi bi-cash-stack me-2"></i>Loja do Jogo
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-3 px-4" id="rubys-tab" data-bs-toggle="pill" data-bs-target="#rubys-pane" type="button" role="tab">
+                            <i class="bi bi-gem me-2"></i>Loja Ruby's
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-3 px-4" id="pix-tab" data-bs-toggle="pill" data-bs-target="#pix-pane" type="button" role="tab">
+                            <i class="bi bi-qr-code me-2"></i>Recarregar Ruby's
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="dinheiro-pane" role="tabpanel" aria-labelledby="dinheiro-tab">
+                    <div class="row g-4" id="money-items">
+                        <div class="col-12 text-center text-muted py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="rubys-pane" role="tabpanel" aria-labelledby="rubys-tab">
+                    <div class="row g-4" id="ruby-items">
+                        <div class="col-12 text-center text-muted py-5">
+                            <div class="spinner-border text-warning" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning bg-warning bg-opacity-10 border-warning border-opacity-25 text-warning mt-4 d-flex align-items-center">
+                        <i class="bi bi-info-circle-fill me-3 fs-4"></i>
+                        <div>
+                            <strong>Importante:</strong> Compras com Ruby's aplicam VIP e benefícios diretamente na sua conta. O servidor processará automaticamente.
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="pix-pane" role="tabpanel" aria-labelledby="pix-tab">
+                    <div class="row g-4" id="pix-items">
+                        <div class="col-12 text-center text-muted py-5">
+                            <div class="spinner-border text-success" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info bg-info bg-opacity-10 border-info border-opacity-25 text-info mt-4 d-flex align-items-center">
+                        <i class="bi bi-shield-check me-3 fs-4"></i>
+                        <div>
+                            <strong>Segurança:</strong> Pagamentos processados via Mercado Pago (Pix). Seus Ruby's são entregues automaticamente após a confirmação.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pix Modal -->
+    <div class="modal fade" id="pixModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-panel border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-white"><i class="bi bi-qr-code me-2"></i>Pagamento Pix</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div id="pix-loading" class="py-4">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2 text-muted">Gerando Pix...</p>
+                    </div>
+                    
+                    <div id="pix-content" class="d-none">
+                        <p class="text-white mb-3">Escaneie o QR Code abaixo ou use o código Copia e Cola:</p>
+                        
+                        <div class="bg-white p-2 rounded-3 d-inline-block mb-3">
+                            <img id="pix-qr-img" src="" alt="QR Code Pix" class="img-fluid" style="max-width: 250px;">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="pix-copypaste" readonly>
+                            <button class="btn btn-outline-light" type="button" id="btn-copy-pix">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+
+                        <div class="alert alert-warning small text-start">
+                            <i class="bi bi-clock me-1"></i> Aguardando pagamento...
+                        </div>
+                    </div>
+
+                    <div id="pix-success" class="d-none py-4">
+                        <i class="bi bi-check-circle-fill text-success display-1"></i>
+                        <h4 class="text-white mt-3">Pagamento Aprovado!</h4>
+                        <p class="text-muted">Seus Ruby's foram adicionados.</p>
+                        <button class="btn btn-success w-100 mt-3" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { auth } from './js/auth.js';
+        import { api } from './js/api.js';
+        import { renderSidebar, renderNavbar, initTheme } from './js/components.js';
+        import { showToast } from './js/app.js';
+
+        initTheme();
+        auth.checkAuth();
+        document.getElementById('navbar-container').innerHTML = renderNavbar('Loja');
+        document.getElementById('sidebar-container').innerHTML = renderSidebar('store');
+
+        let pollInterval = null;
+
+        async function loadStore() {
+            try {
+                const res = await api.get('/shop');
+                if (!res.ok) throw new Error(res.error || 'Erro loja');
+                const { player, moneyItems, rubyItems, buyRubyItems } = res.data;
+
+                document.getElementById('saldo-dinheiro').textContent = player.dinheiro.toLocaleString('pt-BR');
+                document.getElementById('saldo-rubys').textContent = player.rubys.toLocaleString('pt-BR');
+
+                // Money Items
+                const moneyContainer = document.getElementById('money-items');
+                if (!moneyItems || moneyItems.length === 0) {
+                    moneyContainer.innerHTML = '<div class="col-12 text-center text-muted py-5">Nenhum item disponível no momento.</div>';
+                } else {
+                    moneyContainer.innerHTML = moneyItems.map(item => `
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="glass-panel h-100 p-4 d-flex flex-column">
+                                ${item.image ? `<div class="text-center mb-4"><img src="${item.image}" class="img-fluid rounded-3" style="max-height: 160px; object-fit: contain; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));" alt="${item.name}"></div>` : ''}
+                                <h5 class="fw-bold mb-2 text-white">${item.name}</h5>
+                                <p class="text-muted small mb-4 flex-grow-1">${item.description}</p>
+                                <div class="d-flex justify-content-between align-items-center pt-3 border-top border-white border-opacity-10">
+                                    <span class="fw-bold text-success fs-5">$ ${item.price.toLocaleString('pt-BR')}</span>
+                                    <button class="btn btn-primary px-4" data-key="${item.key}" data-type="money">
+                                        Comprar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                // Ruby Items
+                const rubyContainer = document.getElementById('ruby-items');
+                if (!rubyItems || rubyItems.length === 0) {
+                    rubyContainer.innerHTML = '<div class="col-12 text-center text-muted py-5">Nenhum item disponível no momento.</div>';
+                } else {
+                    rubyContainer.innerHTML = rubyItems.map(item => `
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="glass-panel h-100 p-4 d-flex flex-column border-warning border-opacity-25">
+                                <h5 class="fw-bold mb-2 text-white">${item.name}</h5>
+                                <p class="text-muted small mb-4 flex-grow-1">${item.description}</p>
+                                <div class="d-flex justify-content-between align-items-center pt-3 border-top border-white border-opacity-10">
+                                    <span class="fw-bold text-warning fs-5"><i class="bi bi-gem me-1"></i>${item.price}</span>
+                                    <button class="btn btn-warning px-4" data-key="${item.key}" data-type="ruby">
+                                        Comprar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                // Pix Items
+                const pixContainer = document.getElementById('pix-items');
+                let html = '';
+
+                // 1. Custom Amount Card
+                html += `
+                    <div class="col-12 mb-4">
+                        <div class="glass-panel p-4 border-primary border-opacity-50">
+                            <div class="row align-items-center">
+                                <div class="col-md-4 text-center">
+                                    <h4 class="fw-bold text-white mb-2">Pacote Personalizado</h4>
+                                    <p class="text-muted small">Escolha quanto quer comprar</p>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label text-white">Quantidade de Ruby's</label>
+                                    <div class="d-flex align-items-center gap-3 mb-3">
+                                        <input type="range" class="form-range" id="custom-ruby-slider" min="1000" max="100000" step="1000" value="1000">
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text bg-dark text-white border-secondary">Ruby's</span>
+                                        <input type="number" class="form-control bg-dark text-white border-secondary" id="custom-ruby-input" value="1000" min="1000" step="1000">
+                                        <span class="input-group-text bg-dark text-white border-secondary fw-bold text-success" id="custom-price-display">R$ 1,00</span>
+                                    </div>
+                                    <button class="btn btn-primary w-100" id="btn-buy-custom">
+                                        <i class="bi bi-qr-code me-2"></i>Gerar Pix Personalizado
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // 2. Standard Packages
+                if (buyRubyItems && buyRubyItems.length > 0) {
+                    html += buyRubyItems.map(item => `
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="glass-panel h-100 p-4 d-flex flex-column border-info border-opacity-25 ${item.popular ? 'border-warning border-2' : ''}">
+                                ${item.popular ? '<div class="badge bg-warning text-dark position-absolute top-0 end-0 m-3">MAIS VENDIDO</div>' : ''}
+                                <h5 class="fw-bold mb-2 text-white">${item.name}</h5>
+                                <p class="text-muted small mb-4 flex-grow-1">${item.description}</p>
+                                <div class="d-flex justify-content-between align-items-center pt-3 border-top border-white border-opacity-10">
+                                    <span class="fw-bold text-info fs-5">R$ ${item.price.toFixed(2).replace('.', ',')}</span>
+                                    <button class="btn btn-info px-4 text-white" data-key="${item.key}" data-type="pix">
+                                        Comprar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    html += '<div class="col-12 text-center text-muted py-5">Nenhum pacote fixo disponível.</div>';
+                }
+
+                pixContainer.innerHTML = html;
+
+                // Setup Custom Input Logic
+                const slider = document.getElementById('custom-ruby-slider');
+                const input = document.getElementById('custom-ruby-input');
+                const priceDisplay = document.getElementById('custom-price-display');
+                const btnCustom = document.getElementById('btn-buy-custom');
+
+                function updateCustomPrice() {
+                    let val = parseInt(input.value);
+                    if (val < 1000) val = 1000;
+                    if (val % 1000 !== 0) val = Math.round(val / 1000) * 1000;
+                    
+                    const price = (val / 1000) * 1.00;
+                    priceDisplay.textContent = `R$ ${price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+                    slider.value = val;
+                }
+
+                slider.addEventListener('input', () => {
+                    input.value = slider.value;
+                    updateCustomPrice();
+                });
+
+                input.addEventListener('change', () => {
+                    updateCustomPrice();
+                });
+
+                btnCustom.addEventListener('click', () => {
+                    const amount = parseInt(input.value);
+                    startPixPayment('custom_rubys', amount);
+                });
+
+                document.querySelectorAll('button[data-key]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const key = btn.getAttribute('data-key');
+                        const type = btn.getAttribute('data-type');
+                        if (type === 'pix') {
+                            startPixPayment(key);
+                        } else {
+                            confirmPurchase(key, type);
+                        }
+                    });
+                });
+            } catch (e) {
+                console.error(e);
+                showToast('Erro ao carregar loja: ' + e.message, 'danger');
+                ['money-items', 'ruby-items', 'pix-items'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = `<div class="col-12 text-center text-danger py-4">Erro: ${e.message}</div>`;
+                });
+            }
+        }
+
+        async function startPixPayment(itemKey, customAmount = null) {
+            const modal = new bootstrap.Modal(document.getElementById('pixModal'));
+            modal.show();
+            
+            // Reset UI
+            document.getElementById('pix-loading').classList.remove('d-none');
+            document.getElementById('pix-content').classList.add('d-none');
+            document.getElementById('pix-success').classList.add('d-none');
+
+            try {
+                const body = { itemKey };
+                if (customAmount) body.customAmount = customAmount;
+                
+                const res = await api.post('/pix/create', body);
+                if (!res.ok) throw new Error(res.error || 'Erro ao gerar Pix');
+                
+                const { id, qr_code, qr_code_base64, amount } = res.data;
+
+                // Update UI
+                document.getElementById('pix-qr-img').src = `data:image/png;base64,${qr_code_base64}`;
+                document.getElementById('pix-copypaste').value = qr_code;
+                
+                document.getElementById('pix-loading').classList.add('d-none');
+                document.getElementById('pix-content').classList.remove('d-none');
+
+                // Copy Button
+                document.getElementById('btn-copy-pix').onclick = () => {
+                    navigator.clipboard.writeText(qr_code);
+                    showToast('Código Pix copiado!', 'success');
+                };
+
+                // Start Polling
+                if (pollInterval) clearInterval(pollInterval);
+                pollInterval = setInterval(() => checkPixStatus(id, modal), 5000);
+
+            } catch (e) {
+                console.error(e);
+                modal.hide();
+                showToast('Erro: ' + e.message, 'danger');
+            }
+        }
+
+        async function checkPixStatus(paymentId, modal) {
+            try {
+                const res = await api.get(`/pix/status/${paymentId}`);
+                if (res.ok && res.status === 'approved') {
+                    clearInterval(pollInterval);
+                    document.getElementById('pix-content').classList.add('d-none');
+                    document.getElementById('pix-success').classList.remove('d-none');
+                    
+                    // Update balance (optional, can just wait for reload)
+                    // loadStore(); 
+                }
+            } catch (e) {
+                console.error('Polling error:', e);
+            }
+        }
+
+        // Clean up interval on modal close
+        document.getElementById('pixModal').addEventListener('hidden.bs.modal', () => {
+            if (pollInterval) clearInterval(pollInterval);
+            loadStore(); // Reload balance when closing
+        });
+
+        async function confirmPurchase(itemKey, type) {
+            let msg = 'Confirmar compra deste item?';
+            if (type === 'money') {
+                msg = 'Confirmar compra usando dinheiro do jogo?';
+            } else if (type === 'ruby') {
+                msg = 'Confirmar compra usando Ruby\'s?';
+            }
+            if (!window.confirm(msg)) return;
+            try {
+                const res = await api.post('/shop/buy', { itemKey });
+                if (res.ok) {
+                    if (res.newBalance) {
+                        document.getElementById('saldo-dinheiro').textContent = res.newBalance.dinheiro.toLocaleString('pt-BR');
+                        document.getElementById('saldo-rubys').textContent = res.newBalance.rubys.toLocaleString('pt-BR');
+                    }
+                    showToast('Compra realizada com sucesso!', 'success');
+                } else if (res.error === 'saldo_insuficiente') {
+                    showToast('Você não tem dinheiro suficiente.', 'warning');
+                } else if (res.error === 'rubys_insuficientes') {
+                    showToast('Você não tem Ruby\'s suficientes.', 'warning');
+                } else {
+                    showToast(res.error || 'Erro ao realizar compra.', 'danger');
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('Erro de conexão na compra.', 'danger');
+            }
+        }
+
+        loadStore();
+    </script>
+</body>
+</html>

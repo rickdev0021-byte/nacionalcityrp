@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDT Policial - NCRP</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/custom.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .police-card {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid #334155;
+        }
+        .police-btn {
+            background-color: #2563eb;
+        }
+        .police-btn:hover {
+            background-color: #1d4ed8;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans antialiased overflow-hidden">
+
+    <div class="flex h-screen">
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden relative w-full" id="main-content">
+            <!-- Dashboard Content -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-900 p-6">
+                
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-3xl font-bold text-white flex items-center gap-3">
+                            <i class="fas fa-laptop-medical text-blue-500"></i>
+                            DP
+                        </h1>
+                        <p class="text-gray-400 mt-1">Departamento de policial</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <a href="/dashboard" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-700 transition-colors flex items-center gap-2 text-sm font-medium">
+                            <i class="fas fa-home text-blue-500"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <div class="bg-blue-900/30 px-4 py-2 rounded-lg border border-blue-500/30">
+                            <span class="text-blue-400 font-mono text-sm" id="current-time">00:00:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="police-card p-6 rounded-xl shadow-lg relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 h-full w-1 bg-blue-500"></div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm font-medium uppercase tracking-wider">Fichas Criminais</p>
+                                <h3 class="text-3xl font-bold text-white mt-2" id="stat-records">0</h3>
+                            </div>
+                            <div class="p-3 bg-blue-500/10 rounded-lg text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                                <i class="fas fa-file-contract text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="police-card p-6 rounded-xl shadow-lg relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 h-full w-1 bg-red-500"></div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm font-medium uppercase tracking-wider">Detentos Ativos</p>
+                                <h3 class="text-3xl font-bold text-white mt-2" id="stat-prisoners">0</h3>
+                            </div>
+                            <div class="p-3 bg-red-500/10 rounded-lg text-red-500 group-hover:bg-red-500 group-hover:text-white transition-colors">
+                                <i class="fas fa-user-lock text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="police-card p-6 rounded-xl shadow-lg relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 h-full w-1 bg-yellow-500"></div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm font-medium uppercase tracking-wider">Nível de Alerta</p>
+                                <h3 class="text-3xl font-bold text-yellow-500 mt-2">BAIXO</h3>
+                            </div>
+                            <div class="p-3 bg-yellow-500/10 rounded-lg text-yellow-500 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
+                                <i class="fas fa-shield-alt text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="mb-6 border-b border-gray-700">
+                    <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
+                        <li class="mr-2" role="presentation">
+                            <button class="inline-block p-4 rounded-t-lg border-b-2 border-blue-600 text-blue-500 hover:text-blue-500" id="records-tab" data-tabs-target="#records" type="button" role="tab" aria-controls="records" aria-selected="true">
+                                <i class="fas fa-list-ul mr-2"></i>Registros Criminais
+                            </button>
+                        </li>
+                        <li class="mr-2" role="presentation">
+                            <button class="inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-300 hover:border-gray-300 text-gray-400" id="prisoners-tab" data-tabs-target="#prisoners" type="button" role="tab" aria-controls="prisoners" aria-selected="false">
+                                <i class="fas fa-dungeon mr-2"></i>População Carcerária
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Content -->
+                <div id="myTabContent">
+                    <!-- Records Tab -->
+                    <div class="p-4 rounded-lg bg-gray-800" id="records" role="tabpanel" aria-labelledby="records-tab">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold text-white">Últimas Fichas</h2>
+                            <button onclick="loadRecords()" class="text-sm text-blue-400 hover:text-blue-300"><i class="fas fa-sync-alt mr-1"></i> Atualizar</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left text-gray-400">
+                                <thead class="text-xs text-gray-200 uppercase bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">Data</th>
+                                        <th scope="col" class="px-6 py-3">Suspeito</th>
+                                        <th scope="col" class="px-6 py-3">Oficial</th>
+                                        <th scope="col" class="px-6 py-3">Crimes</th>
+                                        <th scope="col" class="px-6 py-3">Observações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="records-table-body">
+                                    <tr><td colspan="5" class="text-center py-4">Carregando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Prisoners Tab -->
+                    <div class="hidden p-4 rounded-lg bg-gray-800" id="prisoners" role="tabpanel" aria-labelledby="prisoners-tab">
+                         <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold text-white">Detentos no Presídio</h2>
+                            <button onclick="loadPrisoners()" class="text-sm text-blue-400 hover:text-blue-300"><i class="fas fa-sync-alt mr-1"></i> Atualizar</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left text-gray-400">
+                                <thead class="text-xs text-gray-200 uppercase bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">ID</th>
+                                        <th scope="col" class="px-6 py-3">Nome</th>
+                                        <th scope="col" class="px-6 py-3">Prendido Por</th>
+                                        <th scope="col" class="px-6 py-3">Motivo</th>
+                                        <th scope="col" class="px-6 py-3">Tempo Restante</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="prisoners-table-body">
+                                    <tr><td colspan="5" class="text-center py-4">Carregando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        // Tab Switching Logic
+        const tabs = [
+            { id: 'records-tab', target: 'records' },
+            { id: 'prisoners-tab', target: 'prisoners' }
+        ];
+
+        tabs.forEach(tab => {
+            const el = document.getElementById(tab.id);
+            el.addEventListener('click', () => {
+                // Reset all
+                tabs.forEach(t => {
+                    document.getElementById(t.target).classList.add('hidden');
+                    const btn = document.getElementById(t.id);
+                    btn.classList.remove('border-blue-600', 'text-blue-500');
+                    btn.classList.add('border-transparent', 'text-gray-400');
+                });
+                // Activate current
+                document.getElementById(tab.target).classList.remove('hidden');
+                el.classList.remove('border-transparent', 'text-gray-400');
+                el.classList.add('border-blue-600', 'text-blue-500');
+            });
+        });
+
+        // Time Update
+        setInterval(() => {
+            document.getElementById('current-time').textContent = new Date().toLocaleTimeString('pt-BR');
+        }, 1000);
+
+        // API Calls
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/police/stats');
+                const json = await res.json();
+                if (json.ok) {
+                    document.getElementById('stat-records').innerText = json.data.records;
+                    document.getElementById('stat-prisoners').innerText = json.data.prisoners;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadRecords() {
+            try {
+                const res = await fetch('/api/police/records');
+                const json = await res.json();
+                const tbody = document.getElementById('records-table-body');
+                
+                if (!json.ok || json.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Nenhum registro encontrado.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = json.data.map(r => `
+                    <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-750">
+                        <td class="px-6 py-4 font-mono text-xs text-gray-500">${new Date(r.created_at).toLocaleDateString('pt-BR')} ${new Date(r.created_at).toLocaleTimeString('pt-BR')}</td>
+                        <td class="px-6 py-4 font-bold text-white">${r.suspect_name}</td>
+                        <td class="px-6 py-4 text-blue-400">${r.officer_name}</td>
+                        <td class="px-6 py-4"><span class="bg-red-900/50 text-red-300 px-2 py-1 rounded text-xs">${r.crimes}</span></td>
+                        <td class="px-6 py-4 text-gray-400 italic">${r.notes || '-'}</td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                document.getElementById('records-table-body').innerHTML = '<tr><td colspan="5" class="text-center py-4 text-red-500">Erro ao carregar dados.</td></tr>';
+            }
+        }
+
+        async function loadPrisoners() {
+            try {
+                const res = await fetch('/api/police/prisoners');
+                const json = await res.json();
+                const tbody = document.getElementById('prisoners-table-body');
+                
+                if (!json.ok || json.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Nenhum detento no momento.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = json.data.map(p => `
+                    <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-750">
+                        <td class="px-6 py-4 font-mono">#${p.id}</td>
+                        <td class="px-6 py-4 font-bold text-white">${p.player_name}</td>
+                        <td class="px-6 py-4 text-blue-400">${p.admin_name}</td>
+                        <td class="px-6 py-4">${p.reason}</td>
+                        <td class="px-6 py-4 font-mono text-yellow-500">${p.minutes} min</td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                document.getElementById('prisoners-table-body').innerHTML = '<tr><td colspan="5" class="text-center py-4 text-red-500">Erro ao carregar dados.</td></tr>';
+            }
+        }
+
+        // Init
+        loadStats();
+        loadRecords();
+        loadPrisoners();
+
+        // Check permission (Redirect if not allowed)
+        fetch('/api/status').then(r => r.json()).then(d => {
+            if (!d.ok) window.location.href = '/login';
+        }).catch(() => window.location.href = '/login');
+    </script>
+</body>
+</html>

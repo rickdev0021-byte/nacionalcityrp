@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Denúncias - NCRP UCP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div id="navbar-container"></div>
+
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom border-secondary">
+                <h1 class="h2 text-white">Gestão de Denúncias</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2 glass-panel p-1">
+                        <button type="button" class="btn btn-sm text-white hover-primary" onclick="filterStatus('Aberta')">Abertas</button>
+                        <button type="button" class="btn btn-sm text-white hover-warning" onclick="filterStatus('Em análise')">Em Análise</button>
+                        <button type="button" class="btn btn-sm text-white hover-light" onclick="filterStatus('')">Todas</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel mb-4">
+                <div class="table-responsive">
+                    <table class="table table-borderless text-white mb-0 align-middle">
+                        <thead class="border-bottom border-secondary">
+                            <tr>
+                                <th class="py-3 ps-4">ID</th>
+                                <th class="py-3">Autor</th>
+                                <th class="py-3">Denunciado</th>
+                                <th class="py-3">Categoria</th>
+                                <th class="py-3">Status</th>
+                                <th class="py-3">Data</th>
+                                <th class="py-3">Staff</th>
+                                <th class="py-3 pe-4 text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-reports-list">
+                            <tr><td colspan="8" class="text-center py-4 text-muted">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Análise Admin -->
+    <div class="modal fade" id="adminModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content glass-panel border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-white">Análise de Denúncia #<span id="adm-id"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-white">
+                    <div class="row">
+                        <!-- Coluna Esquerda: Detalhes -->
+                        <div class="col-lg-8 border-end border-secondary">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <small class="text-muted d-block">Denunciante</small>
+                                    <strong id="adm-author" class="text-light"></strong>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="text-muted d-block">Denunciado</small>
+                                    <strong id="adm-reported" class="text-light"></strong>
+                                </div>
+                                <div class="col-12">
+                                    <small class="text-muted d-block">Descrição</small>
+                                    <p class="glass-panel p-3 rounded mb-0 text-light" id="adm-desc" style="background: rgba(0,0,0,0.2);"></p>
+                                </div>
+                                <div class="col-12">
+                                    <small class="text-muted d-block mb-2">Provas Anexadas</small>
+                                    <div id="adm-evidence" class="row g-2 glass-panel p-2 rounded" style="background: rgba(0,0,0,0.2);"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Coluna Direita: Ações e Logs -->
+                        <div class="col-lg-4">
+                            <h6 class="mb-3 text-white">Ações da Staff</h6>
+                            <div class="d-grid gap-2 mb-4">
+                                <button class="btn btn-warning" onclick="updateStatus('Em análise')">
+                                    <i class="bi bi-search me-2"></i>Assumir / Em Análise
+                                </button>
+                                <button class="btn btn-success" onclick="updateStatus('Aprovada')">
+                                    <i class="bi bi-check-lg me-2"></i>Aprovar Denúncia
+                                </button>
+                                <button class="btn btn-danger" onclick="updateStatus('Recusada')">
+                                    <i class="bi bi-x-lg me-2"></i>Recusar Denúncia
+                                </button>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label text-muted small">Nota Interna (Opcional)</label>
+                                <textarea class="form-control form-control-sm bg-dark text-light border-secondary" id="adm-note" rows="2" placeholder="Motivo da decisão..."></textarea>
+                            </div>
+
+                            <h6 class="mb-2 mt-4 border-top border-secondary pt-3 text-white">Logs do Sistema</h6>
+                            <div id="adm-logs" class="small text-muted" style="max-height: 200px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { auth } from './js/auth.js';
+        import { api } from './js/api.js';
+        import { renderSidebar, renderNavbar, initTheme } from './js/components.js';
+        import { showToast } from './js/app.js';
+
+        initTheme();
+        
+        // Verifica admin
+        const user = auth.getUser();
+        if (!user || !user.admin || user.admin < 1) {
+            window.location.href = '/dashboard';
+        } else {
+            auth.checkAuth();
+            document.getElementById('navbar-container').innerHTML = renderNavbar('Denúncias Admin');
+            document.getElementById('sidebar-container').innerHTML = renderSidebar('admin_reports');
+        }
+
+        let currentFilter = '';
+        let currentReportId = null;
+
+        window.filterStatus = (status) => {
+            currentFilter = status;
+            loadReports();
+        };
+
+        async function loadReports() {
+            try {
+                let url = '/reports';
+                if (currentFilter) url += `?status=${encodeURIComponent(currentFilter)}`;
+                
+                const response = await api.get(url);
+                const tbody = document.getElementById('admin-reports-list');
+                
+                if (response.ok && Array.isArray(response.data) && response.data.length > 0) {
+                    tbody.innerHTML = response.data.map(r => `
+                        <tr>
+                            <td>#${r.id}</td>
+                            <td>${r.author_name || 'Desconhecido'}</td>
+                            <td>${r.reported_nick}</td>
+                            <td><span class="badge bg-secondary">${r.category}</span></td>
+                            <td><span class="badge bg-${getStatusColor(r.status)}">${r.status}</span></td>
+                            <td>${new Date(r.created_at).toLocaleDateString()}</td>
+                            <td>${r.staff_name || '-'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-light" onclick="window.openAdminModal(${r.id})">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else if (response.ok) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted">Nenhuma denúncia encontrada.</td></tr>';
+                } else {
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('admin-reports-list').innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-danger">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Erro ao carregar denúncias. Verifique se o servidor foi atualizado e reiniciado.
+                        </td>
+                    </tr>`;
+            }
+        }
+
+        window.openAdminModal = async (id) => {
+            try {
+                const response = await api.get(`/reports/${id}`);
+                if (response.ok) {
+                    const data = response.data;
+                    currentReportId = data.id;
+                    
+                    document.getElementById('adm-id').textContent = data.id;
+                    document.getElementById('adm-author').textContent = data.author_name;
+                    document.getElementById('adm-reported').textContent = `${data.reported_nick} (ID: ${data.reported_id})`;
+                    document.getElementById('adm-desc').textContent = data.description;
+                    document.getElementById('adm-note').value = '';
+
+                    // Evidence
+                    const evidenceDiv = document.getElementById('adm-evidence');
+                    if (data.evidence && data.evidence.length > 0) {
+                        evidenceDiv.innerHTML = data.evidence.map(e => {
+                            const url = `/uploads/evidence/${e.filename}`;
+                            if (e.type === 'image') {
+                                return `
+                                    <div class="col-4 position-relative">
+                                        <a href="${url}" target="_blank">
+                                            <img src="${url}" class="img-fluid rounded border border-secondary" style="height: 100px; object-fit: cover; width: 100%;">
+                                        </a>
+                                        <span class="badge bg-dark position-absolute top-0 start-0 m-1">IMG</span>
+                                    </div>`;
+                            } else {
+                                return `
+                                    <div class="col-12">
+                                        <video controls class="w-100 rounded border border-secondary" style="max-height: 200px;">
+                                            <source src="${url}">
+                                        </video>
+                                    </div>`;
+                            }
+                        }).join('');
+                    } else {
+                        evidenceDiv.innerHTML = '<p class="text-muted m-2">Sem provas.</p>';
+                    }
+
+                    // Logs
+                    const logsDiv = document.getElementById('adm-logs');
+                    if (data.logs && data.logs.length > 0) {
+                        logsDiv.innerHTML = data.logs.map(l => `
+                            <div class="border-bottom border-secondary py-2">
+                                <div class="d-flex justify-content-between">
+                                    <strong>${l.user_name || 'Sistema'}</strong>
+                                    <span>${new Date(l.created_at).toLocaleString()}</span>
+                                </div>
+                                <div class="text-info">${l.action}</div>
+                                <div>${l.details || ''}</div>
+                            </div>
+                        `).join('');
+                    } else {
+                        logsDiv.innerHTML = 'Sem logs.';
+                    }
+
+                    new bootstrap.Modal(document.getElementById('adminModal')).show();
+                }
+            } catch (e) {
+                showToast('Erro ao carregar detalhes.', 'danger');
+            }
+        };
+
+        window.updateStatus = async (status) => {
+            if (!currentReportId) return;
+            const note = document.getElementById('adm-note').value;
+            
+            if (confirm(`Confirmar mudança de status para: ${status}?`)) {
+                try {
+                    const response = await api.put(`/reports/${currentReportId}/status`, { status, note });
+                    if (response.ok) {
+                        showToast('Status atualizado!', 'success');
+                        bootstrap.Modal.getInstance(document.getElementById('adminModal')).hide();
+                        loadReports();
+                    } else {
+                        showToast('Erro ao atualizar.', 'danger');
+                    }
+                } catch (e) {
+                    showToast('Erro de conexão.', 'danger');
+                }
+            }
+        };
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'Aberta': return 'primary';
+                case 'Em análise': return 'warning';
+                case 'Aprovada': return 'success';
+                case 'Recusada': return 'danger';
+                default: return 'secondary';
+            }
+        }
+
+        loadReports();
+    </script>
+</body>
+</html>

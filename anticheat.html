@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs Anti-Cheat - NCRP UCP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div id="navbar-container"></div>
+
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom border-secondary">
+                <h1 class="h2 text-danger">Logs do Anti-Cheat</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                        <button class="btn btn-sm btn-outline-secondary me-2" onclick="loadLogs()">
+                            <i class="bi bi-arrow-clockwise"></i> Atualizar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <select class="form-select bg-dark text-light border-secondary" id="filter-code" onchange="loadLogs()">
+                            <option value="">Todos os Tipos</option>
+                            <option value="SPEED_HACK">Speed Hack</option>
+                            <option value="TELEPORT">Teleporte</option>
+                            <option value="FLY_HACK">Fly Hack</option>
+                            <option value="MONEY_INJECT">Dinheiro</option>
+                            <option value="VPN_SUSPECT">VPN</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card border-danger border-opacity-25 bg-dark">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle table-dark">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Jogador</th>
+                                        <th>Detecção</th>
+                                        <th>Descrição</th>
+                                        <th>IP</th>
+                                        <th>Data</th>
+                                        <th>Detalhes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="logs-list">
+                                    <tr><td colspan="7" class="text-center py-4 text-muted">Carregando logs...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination (Simple) -->
+                <div class="d-flex justify-content-center mt-4 gap-2">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="changePage(-1)" id="btn-prev">Anterior</button>
+                    <span class="align-self-center text-muted small" id="page-info">Página 1</span>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="changePage(1)" id="btn-next">Próxima</button>
+                </div>
+
+        </div>
+    </div>
+
+    <!-- Modal Detalhes -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-white">Detalhes da Detecção #<span id="modal-id"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-white">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="text-muted small">Jogador</label>
+                            <div class="fw-bold" id="modal-player"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Tipo</label>
+                            <div class="fw-bold text-danger" id="modal-code"></div>
+                        </div>
+                        <div class="col-12">
+                            <label class="text-muted small">Descrição</label>
+                            <div class="p-2 bg-black rounded" id="modal-desc"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Localização (X, Y, Z)</label>
+                            <div class="fw-mono" id="modal-pos"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">IP</label>
+                            <div class="fw-mono" id="modal-ip"></div>
+                        </div>
+                        <div class="col-12">
+                            <label class="text-muted small">Dados Extras (JSON)</label>
+                            <pre class="p-2 bg-black rounded small text-info mb-0" id="modal-extra" style="white-space: pre-wrap;"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { auth } from './js/auth.js';
+        import { api } from './js/api.js';
+        import { renderSidebar, renderNavbar, initTheme } from './js/components.js';
+        import { showToast } from './js/app.js';
+
+        initTheme();
+
+        const user = auth.getUser();
+        // Require admin level >= 4 (Supervisor+) as per server.js logic
+        if (!user || !user.admin || user.admin < 4) {
+            window.location.href = '/dashboard';
+        } else {
+            auth.checkAuth();
+        document.getElementById('navbar-container').innerHTML = renderNavbar('Anti-Cheat');
+        document.getElementById('sidebar-container').innerHTML = renderSidebar('anticheat');
+        }
+
+        let currentPage = 1;
+        const limit = 50;
+
+        window.loadLogs = async () => {
+            const tbody = document.getElementById('logs-list');
+            const code = document.getElementById('filter-code').value;
+            
+            try {
+                const res = await api.get(`/anticheat/logs?page=${currentPage}&limit=${limit}${code ? '&code=' + code : ''}`);
+                
+                if (res.ok && Array.isArray(res.data)) {
+                    if (res.data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Nenhum registro encontrado.</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = res.data.map(log => `
+                        <tr class="hover-glass">
+                            <td class="ps-4"><span class="text-white-50">#${log.id}</span></td>
+                            <td>
+                                <div class="text-white">${log.player_name || 'Desconhecido'}</div>
+                                <small class="text-white-50">ID: ${log.player_id || '?'}</small>
+                            </td>
+                            <td><span class="badge bg-danger bg-opacity-25 text-danger border border-danger">${log.ac_code}</span></td>
+                            <td class="text-truncate text-white-50" style="max-width: 250px;">${log.description || '-'}</td>
+                            <td><span class="font-monospace small text-info">${log.ip || '-'}</span></td>
+                            <td class="text-white-50">${new Date(log.created_at).toLocaleString()}</td>
+                            <td class="pe-4">
+                                <button class="btn btn-sm btn-outline-light glass-btn" onclick='window.openDetails(${JSON.stringify(log).replace(/'/g, "&#39;")})'>
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                    
+                    document.getElementById('page-info').textContent = `Página ${currentPage}`;
+                    document.getElementById('btn-prev').disabled = currentPage <= 1;
+                    document.getElementById('btn-next').disabled = res.data.length < limit;
+
+                } else {
+                    throw new Error('Erro na resposta');
+                }
+            } catch (e) {
+                console.error(e);
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-danger">Erro ao carregar logs.</td></tr>';
+            }
+        };
+
+        window.changePage = (delta) => {
+            const newPage = currentPage + delta;
+            if (newPage < 1) return;
+            currentPage = newPage;
+            loadLogs();
+        };
+
+        window.openDetails = (log) => {
+            document.getElementById('modal-id').textContent = log.id;
+            document.getElementById('modal-player').textContent = `${log.player_name} (ID: ${log.player_id})`;
+            document.getElementById('modal-code').textContent = log.ac_code;
+            document.getElementById('modal-desc').textContent = log.description;
+            document.getElementById('modal-ip').textContent = log.ip || 'N/A';
+            
+            const x = log.pos_x ? parseFloat(log.pos_x).toFixed(2) : 0;
+            const y = log.pos_y ? parseFloat(log.pos_y).toFixed(2) : 0;
+            const z = log.pos_z ? parseFloat(log.pos_z).toFixed(2) : 0;
+            document.getElementById('modal-pos').textContent = `X: ${x}, Y: ${y}, Z: ${z}`;
+            
+            let extra = log.extra;
+            try {
+                if (typeof extra === 'string') {
+                    extra = JSON.stringify(JSON.parse(extra), null, 2);
+                } else {
+                    extra = JSON.stringify(extra, null, 2);
+                }
+            } catch {
+                // leave as string
+            }
+            document.getElementById('modal-extra').textContent = extra || 'Nenhum detalhe extra.';
+
+            new bootstrap.Modal(document.getElementById('detailsModal')).show();
+        };
+
+        // Initial load
+        loadLogs();
+    </script>
+</body>
+</html>

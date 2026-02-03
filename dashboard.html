@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - NCRP UCP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div id="navbar-container"></div>
+
+        <div class="container-fluid">
+            <!-- Stats Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="glass-panel stat-card p-4 h-100">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-0">Dinheiro em Mãos</h6>
+                            <div class="stat-icon text-success">
+                                <i class="bi bi-cash"></i>
+                            </div>
+                        </div>
+                        <h3 class="fw-bold mb-1" id="money-display">$0</h3>
+                        <small class="text-success"><i class="bi bi-arrow-up-short"></i> Atualizado agora</small>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="glass-panel stat-card p-4 h-100">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-0">Saldo Bancário</h6>
+                            <div class="stat-icon text-primary">
+                                <i class="bi bi-bank"></i>
+                            </div>
+                        </div>
+                        <h3 class="fw-bold mb-1" id="bank-display">$0</h3>
+                        <small class="text-muted" id="bank-account-display">Carregando...</small>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="glass-panel stat-card p-4 h-100">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-0">Nível</h6>
+                            <div class="stat-icon text-primary">
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                        </div>
+                        <h3 class="fw-bold mb-1" id="level-display">0</h3>
+                        <small class="text-muted">XP: 0/100</small>
+                    </div>
+                </div>
+
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="glass-panel stat-card p-4 h-100">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-0">Tempo Jogado</h6>
+                            <div class="stat-icon text-info">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                        </div>
+                        <h3 class="fw-bold mb-1" id="playtime-display">0h 0m</h3>
+                        <small class="text-muted" id="last-login-display">Último login: --</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Row -->
+            <div class="row g-4 align-items-start">
+                <!-- Character Preview -->
+                <div class="col-12 col-lg-4">
+                    <div class="glass-panel">
+                        <div class="card-header border-0 d-flex justify-content-between align-items-center pt-4 px-4">
+                            <h5 class="mb-0 fw-bold">Seu Personagem</h5>
+                            <span class="badge bg-success-soft">Online</span>
+                        </div>
+                        <div class="card-body text-center p-4">
+                            <div class="position-relative d-inline-block mb-4">
+                                <div class="position-absolute top-0 start-50 translate-middle-x w-100 h-100 bg-primary opacity-25 blur-xl rounded-circle" style="filter: blur(40px);"></div>
+                                <img id="skin-img" src="/img/ncrp.jpg" alt="Skin" class="position-relative img-fluid rounded-circle shadow-lg" style="width: 150px; height: 150px; object-fit: cover; border: 4px solid rgba(255,255,255,0.1);">
+                            </div>
+                            <h3 class="fw-bold mb-1" id="char-name">Nome do Jogador</h3>
+                            <p class="text-muted mb-3" id="char-desc">Cidadão de Los Santos</p>
+                            
+                            <div class="d-flex justify-content-center gap-2 mb-4">
+                                <span class="badge bg-dark border border-secondary text-white" id="status-display">Jogador</span>
+                                <span class="badge bg-warning text-dark" id="email-status">Verificar Email</span>
+                            </div>
+
+                            <div class="d-grid">
+                                <a href="/status" class="btn btn-primary">
+                                    <i class="bi bi-person-badge me-2"></i>Ver Detalhes Completos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Server/News -->
+                <div class="col-12 col-lg-8">
+                    <!-- Server Status Card -->
+                    <div class="glass-panel mb-4">
+                        <div class="card-header border-0 d-flex justify-content-between align-items-center pt-4 px-4">
+                            <h5 class="mb-0 fw-bold"><i class="bi bi-hdd-network me-2 text-primary"></i>Status do Servidor</h5>
+                            <span class="badge bg-success-soft" id="server-status-badge">Online</span>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row text-center g-4">
+                                <div class="col-6 col-md-3">
+                                    <div class="p-3 rounded-3 bg-surface">
+                                        <div class="text-muted small text-uppercase fw-bold mb-1">Jogadores</div>
+                                        <div class="h4 fw-bold mb-0 text-white" id="server-players">0/500</div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="p-3 rounded-3 bg-surface">
+                                        <div class="text-muted small text-uppercase fw-bold mb-1">Ping Médio</div>
+                                        <div class="h4 fw-bold mb-0 text-success">45ms</div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="p-3 rounded-3 bg-surface">
+                                        <div class="text-muted small text-uppercase fw-bold mb-1">Uptime</div>
+                                        <div class="h4 fw-bold mb-0 text-white">24h</div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="p-3 rounded-3 bg-surface">
+                                        <div class="text-muted small text-uppercase fw-bold mb-1">IP</div>
+                                        <div class="h6 fw-bold mb-0 text-white mt-1">localhost:7777</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel h-100">
+                        <div class="card-header border-0 d-flex justify-content-between align-items-center pt-4 px-4">
+                            <h5 class="mb-0 fw-bold"><i class="bi bi-bell me-2 text-warning"></i>Avisos do Servidor</h5>
+                            <button type="button" id="btn-new-announcement" class="btn btn-sm btn-outline-secondary d-none">
+                                <i class="bi bi-plus-lg me-1"></i>Novo Aviso
+                            </button>
+                        </div>
+                        <div class="card-body p-4">
+                            <div id="server-announcements" class="list-group list-group-flush">
+                                <div class="list-group-item bg-transparent text-white px-0 py-3 border-bottom border-secondary">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1 placeholder-glow"><span class="placeholder col-6"></span></h5>
+                                    </div>
+                                    <p class="mb-1 placeholder-glow"><span class="placeholder col-12"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcement Modal -->
+    <div class="modal fade" id="announcementModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-panel border-0">
+                <div class="modal-header border-bottom border-white border-opacity-10">
+                    <h5 class="modal-title fw-bold text-white">Novo Aviso</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="announcementForm">
+                        <div class="mb-3">
+                            <label for="announcementTitle" class="form-label text-white-50">Título</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="announcementTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="announcementBody" class="form-label text-white-50">Mensagem</label>
+                            <textarea class="form-control bg-dark text-white border-secondary" id="announcementBody" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-white border-opacity-10">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveAnnouncementBtn">Publicar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { auth } from './js/auth.js';
+        import { api } from './js/api.js';
+        import { renderSidebar, renderNavbar, initTheme } from './js/components.js';
+        import { showToast, preloadImage } from './js/app.js';
+
+        initTheme();
+        auth.checkAuth();
+        document.getElementById('navbar-container').innerHTML = renderNavbar('Dashboard');
+        document.getElementById('sidebar-container').innerHTML = renderSidebar('dashboard');
+
+        // Initialize Modal and Listeners
+        const announcementModalEl = document.getElementById('announcementModal');
+        let announcementModal;
+        if (announcementModalEl) {
+             announcementModal = new bootstrap.Modal(announcementModalEl);
+             
+             const btnNew = document.getElementById('btn-new-announcement');
+             const saveBtn = document.getElementById('saveAnnouncementBtn');
+             
+             if (btnNew) {
+                 btnNew.addEventListener('click', () => {
+                     document.getElementById('announcementTitle').value = '';
+                     document.getElementById('announcementBody').value = '';
+                     announcementModal.show();
+                 });
+             }
+
+             if (saveBtn) {
+                 saveBtn.addEventListener('click', async () => {
+                     const title = document.getElementById('announcementTitle').value;
+                     const body = document.getElementById('announcementBody').value;
+                     
+                     if (!title || !body) {
+                         showToast('Preencha todos os campos.', 'warning');
+                         return;
+                     }
+
+                     try {
+                         const res = await api.post('/server-announcements', { title, body });
+                         if (res.ok) {
+                             showToast('Aviso criado com sucesso.', 'success');
+                             announcementModal.hide();
+                             loadDashboard();
+                         } else {
+                             showToast('Erro ao criar aviso.', 'danger');
+                         }
+                     } catch (e) {
+                         console.error(e);
+                         showToast('Erro ao criar aviso.', 'danger');
+                     }
+                 });
+             }
+        }
+
+        // Setup Logout
+        setTimeout(() => {
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    auth.logout();
+                });
+            }
+        }, 100);
+
+        // Fetch Data
+        async function loadDashboard() {
+            try {
+                // Get User Info from cached auth or fetch new
+                const user = auth.getUser();
+                if (user) {
+                    // Placeholder until fresh data arrives
+                    document.getElementById('char-name').textContent = user.nome || user.apelido;
+                    
+                    // Fetch fresh stats & server stats in parallel
+                    const [statsRes, serverRes, announcementsRes] = await Promise.all([
+                        api.get('/status').catch(e => ({ ok: false, error: e })),
+                        api.get('/server-stats').catch(e => ({ ok: false, error: e })),
+                        api.get('/server-announcements').catch(e => ({ ok: false, error: e }))
+                    ]);
+
+                    if (statsRes.ok && statsRes.data) {
+                        const data = statsRes.data;
+                        
+                        // Update UI with fresh data
+                        const displayName = data.nome || data.apelido;
+                        // Removed sidebar-username update to prevent null reference
+                        document.getElementById('char-name').textContent = displayName;
+                        // document.getElementById('welcome-header').textContent = `Seja Bem vindo(a) ${displayName}`;
+                        
+                        // Update Job/Org
+                        const jobDisplay = (data.org && data.org !== 'Civil') ? data.org : (data.emprego || 'Desempregado');
+                        document.getElementById('char-desc').textContent = jobDisplay;
+
+                        document.getElementById('money-display').textContent = `R$ ${(data.dinheiro || 0).toLocaleString('pt-BR')}`;
+                        document.getElementById('bank-display').textContent = `R$ ${(data.bank_balance || 0).toLocaleString('pt-BR')}`;
+                        if (data.account_number) {
+                            document.getElementById('bank-account-display').textContent = `Ag: ${data.agency} | Conta: ${data.account_number}`;
+                        } else {
+                            document.getElementById('bank-account-display').textContent = 'Sem conta bancária';
+                        }
+                        document.getElementById('level-display').textContent = data.level;
+                        
+                        // Update Playtime
+                        const mins = data.minutes_played || 0;
+                        const hrs = Math.floor(mins / 60);
+                        const leftMins = mins % 60;
+                        const ptElem = document.getElementById('playtime-display');
+                        if (ptElem) ptElem.textContent = `${hrs}h ${leftMins}m`;
+                        
+                        // Update Last Login
+                        const lastLoginElem = document.getElementById('last-login-display');
+                        if (lastLoginElem) {
+                            const lastDate = data.ultimo_login || data.last_seen;
+                            lastLoginElem.textContent = `Último login: ${lastDate ? new Date(lastDate).toLocaleDateString() : 'Nunca'}`;
+                        }
+
+                        // Use custom profile photo if available, otherwise skin image
+                        const img = document.getElementById('skin-img');
+                        if (data.profile_photo) {
+                            img.src = data.profile_photo;
+                            img.classList.add('rounded-circle');
+                            img.style.width = '150px';
+                            img.style.height = '150px';
+                            img.style.objectFit = 'cover';
+                        } else {
+                            img.src = `https://raw.githubusercontent.com/Akaexus/samp-skin-screens/master/skins/${data.skin}.png`;
+                            img.classList.remove('rounded-circle');
+                            img.style.width = 'auto';
+                            img.style.height = 'auto';
+                            img.style.maxHeight = '320px';
+                            img.style.objectFit = 'contain';
+                        }
+                        
+                        // Add error handler
+                        img.onerror = function() {
+                            this.src = '/img/ncrp.jpg';
+                            this.classList.add('rounded-circle');
+                            this.style.width = '150px';
+                            this.style.height = '150px';
+                            this.style.objectFit = 'cover';
+                        };
+                        
+
+                        const statusDisplay = document.getElementById('status-display');
+                        const isSupervisorPlus = data && ['supervisor','gerente','coordenador','sub dono','subdono','fundador'].includes((data.cargo || '').toLowerCase());
+                        
+                        // Email Status
+                        const emailStatus = document.getElementById('email-status');
+                        if (emailStatus) {
+                            if (data.email) {
+                                emailStatus.textContent = 'Email Vinculado';
+                                emailStatus.className = 'badge bg-success';
+                            } else {
+                                emailStatus.textContent = 'Verificar e-mail';
+                                emailStatus.className = 'badge bg-warning text-dark';
+                            }
+                        }
+
+                        if (data.admin > 0) {
+                            // Capitalize cargo name
+                            const cargoName = (data.cargo || 'Administrador').replace(/(^\w|\s\w)/g, m => m.toUpperCase());
+                            statusDisplay.textContent = cargoName;
+                            statusDisplay.className = 'badge bg-danger';
+                            
+                            const charCardHeader = document.querySelector('.col-lg-4 .card-header');
+                            if (charCardHeader && !charCardHeader.querySelector('.badge-admin')) {
+                                const badge = document.createElement('span');
+                                badge.className = 'badge bg-danger ms-2 badge-admin';
+                                badge.textContent = 'ADM';
+                                charCardHeader.appendChild(badge);
+                            }
+                        } else {
+                            statusDisplay.textContent = 'Jogador';
+                            statusDisplay.className = 'badge bg-dark border border-secondary text-white';
+                        }
+
+                        const btnNew = document.getElementById('btn-new-announcement');
+                        if (btnNew) {
+                            if (isSupervisorPlus) {
+                                btnNew.classList.remove('d-none');
+                            } else {
+                                btnNew.classList.add('d-none');
+                            }
+                        }
+
+                        if (data.armas && Array.isArray(data.armas)) {
+                            data.armas.forEach(w => {
+                                const id = w.id || w;
+                                preloadImage(`/img/weapons/${id}.png`);
+                            });
+                        }
+                    }
+
+                    if (serverRes.ok && serverRes.data) {
+                        const sData = serverRes.data;
+                        document.getElementById('server-players').textContent = `${sData.players_online}/${sData.max_players}`;
+                        document.getElementById('server-status-badge').textContent = sData.status;
+                        document.getElementById('server-status-badge').className = `badge bg-${sData.status === 'Online' ? 'success' : 'danger'}`;
+                    }
+
+                    if (announcementsRes.ok && Array.isArray(announcementsRes.data)) {
+                        const list = document.getElementById('server-announcements');
+                        if (announcementsRes.data.length === 0) {
+                            list.innerHTML = `
+                                <div class="list-group-item bg-transparent text-muted px-0 py-3 border-0">
+                                    Nenhum aviso no momento.
+                                </div>
+                            `;
+                        } else {
+                            // Show only top 3 latest announcements
+                            list.innerHTML = announcementsRes.data
+                                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                                .slice(0, 3)
+                                .map(a => {
+                                const date = new Date(a.created_at);
+                                const dateStr = isNaN(date.getTime()) ? '' : date.toLocaleString('pt-BR');
+                                const author = a.author_name ? ` • ${a.author_name}` : '';
+                                return `
+                                    <div class="list-group-item bg-transparent text-white px-0 py-3 border-bottom border-secondary">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1">${a.title}</h5>
+                                            <small class="text-muted">${dateStr}${author}</small>
+                                        </div>
+                                        <p class="mb-1 text-muted">${a.body}</p>
+                                    </div>
+                                `;
+                            }).join('');
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+                showToast('Erro ao carregar dados.', 'danger');
+            }
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>

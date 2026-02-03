@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Governo - NCRP UCP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/custom.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Page Specific Styles */
+        .gov-stat-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gov-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .gov-stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+        }
+
+        .gov-stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-icon-wrapper {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .stat-icon-wrapper::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            opacity: 0.2;
+        }
+
+        .stat-money .stat-icon-wrapper { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .stat-money .stat-icon-wrapper::after { background: #10b981; -webkit-filter: blur(10px); filter: blur(10px); }
+        
+        .stat-tax .stat-icon-wrapper { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .stat-tax .stat-icon-wrapper::after { background: #f59e0b; }
+
+        .stat-inflation .stat-icon-wrapper { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .stat-inflation .stat-icon-wrapper::after { background: #ef4444; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .official-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.25rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .official-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .role-badge {
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 700;
+            opacity: 0.7;
+            margin-bottom: 0.25rem;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .custom-table tr {
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.2s;
+        }
+
+        .custom-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: scale(1.01);
+        }
+
+        .custom-table td {
+            padding: 1rem 1.5rem;
+            border: none;
+        }
+
+        .custom-table td:first-child { border-radius: 12px 0 0 12px; }
+        .custom-table td:last-child { border-radius: 0 12px 12px 0; }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div id="navbar-container"></div>
+
+        <div class="container-fluid px-4 py-4">
+            <!-- Header -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-5 animate-up">
+                <div>
+                    <h1 class="h2 fw-bold text-white mb-2">Painel do Governo</h1>
+                    <p class="text-muted mb-0">Monitoramento econômico e legislativo em tempo real</p>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2 rounded-pill">
+                        <i class="bi bi-circle-fill small me-2"></i>Sistema Online
+                    </span>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="row g-4 mb-5">
+                <div class="col-12 col-md-4 animate-up delay-1">
+                    <div class="gov-stat-card stat-money p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="stat-icon-wrapper">
+                                <i class="bi bi-bank2 fs-2"></i>
+                            </div>
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">+2.4%</span>
+                        </div>
+                        <div class="mt-2">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-1">Tesouro Nacional</h6>
+                            <h2 class="fw-bold text-white mb-0 fs-3 text-truncate" id="gov-balance" title="Saldo Total">...</h2>
+                            <small class="text-muted mt-2 d-block">Reserva total disponível</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-4 animate-up delay-2">
+                    <div class="gov-stat-card stat-tax p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="stat-icon-wrapper">
+                                <i class="bi bi-pie-chart-fill fs-2"></i>
+                            </div>
+                            <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3">Estável</span>
+                        </div>
+                        <div class="mt-2">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-1">Imposto Base</h6>
+                            <h2 class="fw-bold text-white mb-0 display-6" id="gov-tax">...</h2>
+                            <small class="text-muted mt-2 d-block">Taxa sobre transações</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-4 animate-up delay-3">
+                    <div class="gov-stat-card stat-inflation p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="stat-icon-wrapper">
+                                <i class="bi bi-graph-up-arrow fs-2"></i>
+                            </div>
+                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3">Alerta</span>
+                        </div>
+                        <div class="mt-2">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-1">Inflação Estimada</h6>
+                            <h2 class="fw-bold text-white mb-0 display-6" id="gov-inflation">...</h2>
+                            <small class="text-muted mt-2 d-block">Índice de preços ao consumidor</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <!-- Officials -->
+                <div class="col-12 col-xl-4 animate-up delay-1">
+                    <div class="glass-panel p-4 h-100">
+                        <div class="section-header">
+                            <h5 class="fw-bold text-white m-0">Gabinete Oficial</h5>
+                            <button class="btn btn-sm btn-outline-light rounded-pill px-3">Ver Todos</button>
+                        </div>
+                        <div id="officials-list" class="mt-3">
+                            <div class="p-4 text-center text-muted">Carregando...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Laws -->
+                <div class="col-12 col-xl-8 animate-up delay-2">
+                    <div class="glass-panel p-4 h-100">
+                        <div class="section-header">
+                            <h5 class="fw-bold text-white m-0">Leis em Vigor</h5>
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25">Legislativo</span>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="custom-table text-white">
+                                <tbody id="laws-list">
+                                    <tr><td colspan="3" class="text-center py-4 text-muted">Carregando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts & Corporations -->
+            <div class="row g-4 animate-up delay-3">
+                <div class="col-12 col-lg-6">
+                    <div class="glass-panel p-4 h-100">
+                        <div class="section-header">
+                            <h5 class="fw-bold text-white m-0">Indicadores Econômicos</h5>
+                            <select class="form-select form-select-sm bg-dark text-white border-secondary w-auto">
+                                <option>Últimos 6 Meses</option>
+                                <option>Último Ano</option>
+                            </select>
+                        </div>
+                        <div class="position-relative" style="height: 300px;">
+                            <canvas id="economyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="glass-panel p-4 h-100">
+                        <div class="section-header">
+                            <h5 class="fw-bold text-white m-0">Top Corporações</h5>
+                            <i class="bi bi-trophy-fill text-warning fs-5"></i>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="custom-table text-white">
+                                <thead>
+                                    <tr style="background: transparent !important;">
+                                        <th class="text-muted small text-uppercase fw-bold ps-4">Empresa</th>
+                                        <th class="text-muted small text-uppercase fw-bold">Proprietário</th>
+                                        <th class="text-muted small text-uppercase fw-bold text-end pe-4">Capital</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="corp-list">
+                                    <tr><td colspan="3" class="text-center py-4 text-muted">Carregando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { auth } from './js/auth.js';
+        import { renderSidebar, renderNavbar, initTheme } from './js/components.js';
+
+        initTheme();
+        
+        // Initial check
+        const user = auth.getUser();
+        if (!user) {
+            window.location.href = '/login';
+        } else {
+            auth.checkAuth();
+            document.getElementById('navbar-container').innerHTML = renderNavbar('Governo');
+            document.getElementById('sidebar-container').innerHTML = renderSidebar('governo');
+            
+            loadGovernmentData();
+        }
+
+        async function loadGovernmentData() {
+            try {
+                // 1. Stats
+                const resStats = await fetch('/api/governo/stats');
+                const stats = (await resStats.json()).data;
+                
+                const balanceFormatted = `$${stats.balance.toLocaleString('pt-BR')}`;
+                const balanceEl = document.getElementById('gov-balance');
+                balanceEl.innerText = balanceFormatted;
+                balanceEl.title = balanceFormatted;
+
+                document.getElementById('gov-tax').innerText = `${(stats.tax_rate * 100).toFixed(1)}%`;
+                const inflation = (stats.tax_rate * 0.5 + 0.02) * 100; 
+                document.getElementById('gov-inflation').innerText = `${inflation.toFixed(2)}%`;
+
+                // 2. Officials
+                const resOff = await fetch('/api/governo/officials');
+                const officials = (await resOff.json()).data;
+                
+                const rolesMap = {
+                    'president': { name: 'Presidente', icon: 'bi-person-badge-fill', color: 'text-primary', bg: 'bg-primary' },
+                    'vp': { name: 'Vice-Presidente', icon: 'bi-person-badge', color: 'text-info', bg: 'bg-info' },
+                    'minister_economy': { name: 'Min. da Economia', icon: 'bi-graph-up', color: 'text-success', bg: 'bg-success' },
+                    'minister_justice': { name: 'Min. da Justiça', icon: 'bi-hammer', color: 'text-warning', bg: 'bg-warning' }
+                };
+
+                const officialsList = document.getElementById('officials-list');
+                officialsList.innerHTML = '';
+                
+                const order = ['president', 'vp', 'minister_economy', 'minister_justice'];
+                
+                order.forEach(roleKey => {
+                    const official = officials.find(o => o.role_key === roleKey);
+                    const roleInfo = rolesMap[roleKey] || { name: roleKey, icon: 'bi-person', color: 'text-white', bg: 'bg-secondary' };
+                    const name = official ? official.player_name : 'Vago';
+                    const opacityClass = official ? '' : 'opacity-50';
+                    
+                    officialsList.innerHTML += `
+                        <div class="official-card ${opacityClass}">
+                            <div class="rounded-circle ${roleInfo.bg} bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                                <i class="bi ${roleInfo.icon} fs-5 ${roleInfo.color}"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="role-badge ${roleInfo.color}">${roleInfo.name}</div>
+                                <div class="fw-bold text-white">${name}</div>
+                            </div>
+                            ${official ? '<i class="bi bi-check-circle-fill text-success"></i>' : '<i class="bi bi-dash-circle text-muted"></i>'}
+                        </div>
+                    `;
+                });
+
+                // 3. Laws
+                const resLaws = await fetch('/api/governo/laws');
+                const laws = (await resLaws.json()).data;
+                const lawsList = document.getElementById('laws-list');
+                
+                if (laws.length === 0) {
+                    lawsList.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-muted">Nenhuma lei ativa no momento.</td></tr>`;
+                } else {
+                    lawsList.innerHTML = laws.map(law => `
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle bg-white bg-opacity-10 p-2">
+                                        <i class="bi bi-file-text text-white"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-white">${law.title}</div>
+                                        <small class="text-muted">${law.description.substring(0, 50)}${law.description.length > 50 ? '...' : ''}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-pen text-muted"></i>
+                                    <span>${law.author}</span>
+                                </div>
+                            </td>
+                            <td class="text-end pe-4 text-muted small">${new Date(law.created_at).toLocaleDateString('pt-BR')}</td>
+                        </tr>
+                    `).join('');
+                }
+
+                // 4. Corporations
+                const resCorp = await fetch('/api/governo/corporations');
+                const corps = (await resCorp.json()).data;
+                const corpList = document.getElementById('corp-list');
+
+                if (corps.length === 0) {
+                    corpList.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-muted">Nenhuma corporação registrada.</td></tr>`;
+                } else {
+                    corpList.innerHTML = corps.slice(0, 5).map((c, index) => `
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="text-muted fw-bold small">#${index + 1}</span>
+                                    <div class="fw-bold text-white">${c.name}</div>
+                                </div>
+                            </td>
+                            <td class="text-muted">${c.owner_name}</td>
+                            <td class="pe-4 text-end text-success fw-bold">$${c.balance.toLocaleString('pt-BR')}</td>
+                        </tr>
+                    `).join('');
+                }
+
+                // 5. Chart
+                initChart();
+
+            } catch (e) {
+                console.error("Erro ao carregar dados do governo:", e);
+            }
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('economyChart').getContext('2d');
+            
+            // Create gradient
+            const gradient1 = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient1.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
+            gradient1.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+
+            const gradient2 = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient2.addColorStop(0, 'rgba(16, 185, 129, 0.5)');
+            gradient2.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
+            const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+            const data1 = [10, 12, 15, 14, 18, 20];
+            const data2 = [5, 5, 6, 5, 5.5, 6];
+
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.05)';
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Crescimento (%)',
+                        data: data1,
+                        borderColor: '#3b82f6',
+                        backgroundColor: gradient1,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Receita (M)',
+                        data: data2,
+                        borderColor: '#10b981',
+                        backgroundColor: gradient2,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'top', 
+                            align: 'end',
+                            labels: { 
+                                usePointStyle: true,
+                                boxWidth: 8,
+                                padding: 20,
+                                font: { family: "'Inter', sans-serif", size: 12 }
+                            } 
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#cbd5e1',
+                            padding: 12,
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            grid: { borderDash: [4, 4], drawBorder: false },
+                            beginAtZero: true
+                        },
+                        x: { 
+                            grid: { display: false, drawBorder: false }
+                        }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                }
+            });
+        }
+    </script>
+</body>
+</html>

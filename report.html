@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Denúncias - NCRP UCP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div id="navbar-container"></div>
+
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom border-secondary">
+                <h1 class="h2">Central de Denúncias</h1>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newReportModal">
+                    <i class="bi bi-plus-lg me-2"></i>Nova Denúncia
+                </button>
+            </div>
+
+            <div class="glass-panel mb-4">
+                    <div class="p-3 border-bottom border-secondary">
+                        <h5 class="mb-0 text-white"><i class="bi bi-list-ul me-2"></i>Minhas Denúncias</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-borderless text-white mb-0 align-middle" id="reports-table">
+                            <thead class="border-bottom border-secondary">
+                                <tr>
+                                    <th class="py-3 ps-4">ID</th>
+                                    <th class="py-3">Denunciado</th>
+                                    <th class="py-3">Categoria</th>
+                                    <th class="py-3">Status</th>
+                                    <th class="py-3">Data</th>
+                                    <th class="py-3 pe-4">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reports-list">
+                                <tr><td colspan="6" class="text-center py-4 text-muted">Carregando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+        </div>
+    </div>
+
+    <!-- Modal Nova Denúncia -->
+    <div class="modal fade" id="newReportModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content glass-panel border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-white">Nova Denúncia</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reportForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50">Nick do Denunciado</label>
+                                <input type="text" class="form-control glass-input text-white border-0" name="reported_nick" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50">ID do Denunciado</label>
+                                <input type="number" class="form-control glass-input text-white border-0" name="reported_id" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label text-white-50">Categoria</label>
+                                <select class="form-select glass-input text-white border-0" name="category" required>
+                                    <option value="" class="bg-dark">Selecione...</option>
+                                    <option value="Cheating/Hacks" class="bg-dark">Uso de Hacks/Cheats</option>
+                                    <option value="Ofensa/Abuso" class="bg-dark">Ofensa/Abuso Verbal</option>
+                                    <option value="Bug Abuse" class="bg-dark">Abuso de Bugs</option>
+                                    <option value="Anti-RP" class="bg-dark">Anti-Roleplay (DM, VDM, etc)</option>
+                                    <option value="Outros" class="bg-dark">Outros</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label text-white-50">Descrição Detalhada</label>
+                                <textarea class="form-control glass-input text-white border-0" name="description" rows="4" required placeholder="Descreva o ocorrido com detalhes..."></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label text-white-50">Provas (Imagens/Vídeos)</label>
+                                <input type="file" class="form-control glass-input text-white border-0" name="evidence" multiple accept="image/*,video/*">
+                                <div class="form-text text-muted">Máximo 5 arquivos. Apenas imagens e vídeos curtos.</div>
+                            </div>
+                            <div class="col-12">
+                                <div class="alert alert-warning glass-panel border-warning text-warning mb-0">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    <strong>Atenção:</strong> Denúncias falsas podem resultar em punição para sua conta. Envie apenas provas verídicas e sem edições.
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-light glass-btn" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary glass-btn" onclick="submitReport()">Enviar Denúncia</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detalhes -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content glass-panel border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-white">Detalhes da Denúncia #<span id="detail-id"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-white">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <small class="text-white-50 d-block">Denunciado</small>
+                            <strong id="detail-reported" class="text-white"></strong>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-white-50 d-block">Categoria</small>
+                            <span class="badge bg-secondary" id="detail-category"></span>
+                        </div>
+                        <div class="col-12">
+                            <small class="text-white-50 d-block">Descrição</small>
+                            <p class="glass-panel p-3 rounded mt-1" id="detail-desc"></p>
+                        </div>
+                        <div class="col-12">
+                            <small class="text-white-50 d-block mb-2">Provas</small>
+                            <div id="detail-evidence" class="row g-2"></div>
+                        </div>
+                        <div class="col-12 border-top border-secondary pt-3">
+                            <small class="text-white-50 d-block mb-2">Histórico/Status</small>
+                            <div id="detail-status-history"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { auth } from './js/auth.js';
+        import { api } from './js/api.js';
+        import { renderSidebar, renderNavbar, initTheme } from './js/components.js';
+        import { showToast } from './js/app.js';
+
+        initTheme();
+        auth.checkAuth();
+        document.getElementById('navbar-container').innerHTML = renderNavbar('Denúncias');
+        document.getElementById('sidebar-container').innerHTML = renderSidebar('reports');
+
+        window.submitReport = async () => {
+            const form = document.getElementById('reportForm');
+            const formData = new FormData(form);
+            
+            // Loading state
+            const btn = document.querySelector('#newReportModal .btn-primary');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...';
+
+            try {
+                const response = await fetch('/api/reports', {
+                    method: 'POST',
+                    body: formData // Fetch handles multipart/form-data boundary automatically
+                });
+                
+                const result = await response.json();
+                
+                if (result.ok) {
+                    showToast('Denúncia enviada com sucesso!', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('newReportModal')).hide();
+                    form.reset();
+                    loadReports();
+                } else {
+                    showToast(result.error || 'Erro ao enviar denúncia.', 'danger');
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('Erro de conexão.', 'danger');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        };
+
+        async function loadReports() {
+            try {
+                const response = await api.get('/reports');
+                const tbody = document.getElementById('reports-list');
+                
+                if (response.ok && Array.isArray(response.data) && response.data.length > 0) {
+                    tbody.innerHTML = response.data.map(r => `
+                        <tr class="hover-glass">
+                            <td class="ps-4 text-white-50">#${r.id}</td>
+                            <td class="text-white">${r.reported_nick} <small class="text-white-50">(ID: ${r.reported_id})</small></td>
+                            <td><span class="badge bg-secondary bg-opacity-75">${r.category}</span></td>
+                            <td>
+                                <span class="badge bg-${getStatusColor(r.status)} bg-opacity-75">${r.status}</span>
+                            </td>
+                            <td class="text-white-50">${new Date(r.created_at).toLocaleDateString()}</td>
+                            <td class="pe-4">
+                                <button class="btn btn-sm btn-outline-light glass-btn" onclick="window.viewReport(${r.id})">
+                                    <i class="bi bi-eye-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else if (response.ok) {
+                     tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Nenhuma denúncia encontrada.</td></tr>';
+                } else {
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('reports-list').innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-danger">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Erro ao carregar denúncias. Verifique a conexão ou reinicie o servidor.
+                        </td>
+                    </tr>`;
+            }
+        }
+
+        window.viewReport = async (id) => {
+            try {
+                const response = await api.get(`/reports/${id}`);
+                if (response.ok) {
+                    const data = response.data;
+                    document.getElementById('detail-id').textContent = data.id;
+                    document.getElementById('detail-reported').textContent = `${data.reported_nick} (ID: ${data.reported_id})`;
+                    document.getElementById('detail-category').textContent = data.category;
+                    document.getElementById('detail-desc').textContent = data.description;
+                    
+                    const evidenceDiv = document.getElementById('detail-evidence');
+                    if (data.evidence && data.evidence.length > 0) {
+                        evidenceDiv.innerHTML = data.evidence.map(e => {
+                            const url = `/uploads/evidence/${e.filename}`;
+                            if (e.type === 'image') {
+                                return `
+                                    <div class="col-6 col-md-4">
+                                        <a href="${url}" target="_blank">
+                                            <img src="${url}" class="img-fluid rounded border border-secondary" alt="Prova">
+                                        </a>
+                                    </div>`;
+                            } else {
+                                return `
+                                    <div class="col-12">
+                                        <video controls class="w-100 rounded border border-secondary" style="max-height: 300px;">
+                                            <source src="${url}">
+                                            Seu navegador não suporta vídeos.
+                                        </video>
+                                    </div>`;
+                            }
+                        }).join('');
+                    } else {
+                        evidenceDiv.innerHTML = '<p class="text-muted">Sem provas anexadas.</p>';
+                    }
+                    
+                    // Status History (Mock for user view, showing current status details)
+                    const statusDiv = document.getElementById('detail-status-history');
+                    statusDiv.innerHTML = `
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-${getStatusColor(data.status)} fs-6">${data.status}</span>
+                            ${data.staff_name ? `<small class="text-white-50">Atualizado por: ${data.staff_name}</small>` : ''}
+                        </div>
+                    `;
+
+                    new bootstrap.Modal(document.getElementById('detailsModal')).show();
+                }
+            } catch (e) {
+                showToast('Erro ao carregar detalhes.', 'danger');
+            }
+        };
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'Aberta': return 'primary';
+                case 'Em análise': return 'warning';
+                case 'Aprovada': return 'success';
+                case 'Recusada': return 'danger';
+                default: return 'secondary';
+            }
+        }
+
+        loadReports();
+    </script>
+</body>
+</html>

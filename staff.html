@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervisão de Staff - NCRP UCP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+    <div id="sidebar-container"></div>
+    <div class="main-content">
+        <div id="navbar-container"></div>
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom border-white border-opacity-10">
+                <h1 class="h2 text-white fw-bold">Supervisão de Staff</h1>
+            </div>
+
+            <!-- Team Summary Panel -->
+            <div class="row g-4 mb-4" id="team-summary-panel">
+                    <div class="col-12 col-md-4">
+                        <div class="glass-panel p-4 h-100">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <h6 class="text-primary text-uppercase small fw-bold mb-0"><i class="bi bi-clock-history me-2"></i>Mais Ativos (7d)</h6>
+                            </div>
+                            <div id="top-hours" class="small">
+                                <div class="text-muted">Carregando...</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="glass-panel p-4 h-100">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <h6 class="text-success text-uppercase small fw-bold mb-0"><i class="bi bi-check-circle me-2"></i>Top Denúncias (7d)</h6>
+                            </div>
+                            <div id="top-reports" class="small">
+                                <div class="text-muted">Carregando...</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="glass-panel p-4 h-100">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <h6 class="text-danger text-uppercase small fw-bold mb-0"><i class="bi bi-slash-circle me-2"></i>Top Banimentos (7d)</h6>
+                            </div>
+                            <div id="top-bans" class="small">
+                                <div class="text-muted">Carregando...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-12 col-lg-7">
+                        <div class="glass-panel h-100">
+                            <div class="card-header border-0 d-flex justify-content-between align-items-center pt-4 px-4 pb-0">
+                                <h5 class="mb-0 fw-bold"><i class="bi bi-people-fill me-2 text-primary"></i>Equipe</h5>
+                                <div class="d-flex align-items-center gap-2">
+                                    <select id="staff-role-filter" class="form-select form-select-sm bg-dark text-light border-secondary">
+                                        <option value="">Todos cargos</option>
+                                        <option value="ajudante">Ajudantes</option>
+                                        <option value="moderador">Moderadores</option>
+                                        <option value="administrador">Administradores</option>
+                                    </select>
+                                    <button id="btn-view-absences" class="btn btn-sm btn-info text-white">
+                                        <i class="bi bi-calendar-check me-1"></i>Ver Afastamentos
+                                    </button>
+                                    <button id="btn-weekly-report" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-file-earmark-bar-graph me-1"></i>Relatório
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body p-0 mt-3">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0 align-middle table-dark bg-transparent">
+                                        <thead>
+                                            <tr>
+                                                <th class="px-4 text-muted text-uppercase small fw-bold">ID</th>
+                                                <th class="text-muted text-uppercase small fw-bold">Nick</th>
+                                                <th class="text-muted text-uppercase small fw-bold">Cargo</th>
+                                                <th class="text-muted text-uppercase small fw-bold">RG</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="staff-list">
+                                            <tr><td colspan="5" class="text-center py-4 text-muted">Carregando staff...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-5">
+                        <div class="glass-panel h-100">
+                            <div class="card-header border-0 d-flex justify-content-between align-items-center pt-4 px-4">
+                                <h5 class="mb-0 fw-bold"><i class="bi bi-graph-up-arrow me-2 text-info"></i>Atividade</h5>
+                                <button id="btn-pdf" class="btn btn-sm btn-outline-danger" disabled>
+                                    <i class="bi bi-file-earmark-pdf me-1"></i>PDF
+                                </button>
+                            </div>
+                            <div class="card-body p-4">
+                                <div id="staff-placeholder" class="text-muted text-center py-5">
+                                    <i class="bi bi-cursor-fill fs-1 d-block mb-3 opacity-25"></i>
+                                    Selecione um staff na tabela para visualizar a atividade.
+                                </div>
+                                <div id="staff-details" class="d-none">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3 text-primary">
+                                            <i class="bi bi-person-badge fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h5 id="staff-name" class="mb-0 fw-bold"></h5>
+                                            <small class="text-muted" id="staff-meta"></small>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Horário de Trabalho</h6>
+                                        <div class="p-3 rounded-3 bg-surface mb-2">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-muted">Total</span>
+                                                <span id="staff-total-minutes" class="fw-bold text-white"></span>
+                                            </div>
+                                        </div>
+                                        <div class="p-3 rounded-3 bg-surface">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-muted">Últimos 7 dias</span>
+                                                <span id="staff-week-minutes" class="fw-bold text-white"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Denúncias</h6>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="p-3 rounded-3 bg-surface h-100">
+                                                    <small class="text-muted d-block mb-1">Total</small>
+                                                    <span id="staff-total-reports" class="h5 fw-bold text-white mb-0"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="p-3 rounded-3 bg-surface h-100">
+                                                    <small class="text-muted d-block mb-1">Semana</small>
+                                                    <span id="staff-week-reports" class="h5 fw-bold text-white mb-0"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Banimentos</h6>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="p-3 rounded-3 bg-surface h-100">
+                                                    <small class="text-muted d-block mb-1">Total</small>
+                                                    <span id="staff-total-bans" class="h5 fw-bold text-danger mb-0"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="p-3 rounded-3 bg-surface h-100">
+                                                    <small class="text-muted d-block mb-1">Semana</small>
+                                                    <span id="staff-week-bans" class="h5 fw-bold text-danger mb-0"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Modal Detalhes -->
+
+    <!-- Modal Lista de Afastamentos -->
+    <div class="modal fade" id="absencesListModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content glass-panel text-white">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title">Afastamentos Ativos</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover bg-transparent align-middle mb-0" id="absencesTable">
+                            <thead>
+                                <tr>
+                                    <th>Nick</th>
+                                    <th>Discord</th>
+                                    <th>Retorno</th>
+                                    <th>Motivo</th>
+                                    <th class="text-end">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="5" class="text-center text-muted py-3">Carregando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { auth } from './js/auth.js';
+        import { api } from './js/api.js';
+        import { renderSidebar, renderNavbar, initTheme } from './js/components.js';
+        import { showToast } from './js/app.js';
+
+        let currentStaffId = null;
+
+        initTheme();
+
+        const user = auth.getUser();
+        if (!user || !user.admin || user.admin < 4) {
+            window.location.href = '/dashboard';
+        } else {
+            auth.checkAuth();
+            document.getElementById('navbar-container').innerHTML = renderNavbar('Staff');
+            document.getElementById('sidebar-container').innerHTML = renderSidebar('staff');
+        }
+
+        // View Absences Logic
+        const btnViewAbsences = document.getElementById('btn-view-absences');
+        if (btnViewAbsences) {
+            btnViewAbsences.addEventListener('click', () => {
+                const modal = new bootstrap.Modal(document.getElementById('absencesListModal'));
+                modal.show();
+                loadAbsences();
+            });
+        }
+
+        async function loadAbsences() {
+            const tbody = document.querySelector('#absencesTable tbody');
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-3">Carregando...</td></tr>';
+            try {
+                const res = await api.get('/staff/absences');
+                if (res.ok && res.data) {
+                    if (res.data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-3">Nenhum afastamento registrado.</td></tr>';
+                        return;
+                    }
+                    
+                    tbody.innerHTML = res.data.map(a => `
+                        <tr>
+                            <td>${a.nick}</td>
+                            <td>${a.discord}</td>
+                            <td>${new Date(a.return_date).toLocaleDateString('pt-BR')}</td>
+                            <td class="text-truncate" style="max-width: 200px;" title="${a.reason}">${a.reason}</td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-outline-info" onclick="copyAbsenceToClipboard('${a.nick}', '${a.discord}', '${a.reason}', '${a.return_date}')" title="Copiar para Discord">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (e) {
+                console.error(e);
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-3">Erro ao carregar dados.</td></tr>';
+            }
+        }
+
+        window.copyAbsenceToClipboard = (nick, discord, reason, date) => {
+            const text = `**Afastamento Staff**\n**Nick:** ${nick}\n**Discord:** ${discord}\n**Motivo:** ${reason}\n**Retorno:** ${new Date(date).toLocaleDateString('pt-BR')}`;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Copiado para área de transferência!', 'success');
+            }).catch(err => {
+                console.error('Erro ao copiar', err);
+                showToast('Erro ao copiar.', 'danger');
+            });
+        };
+
+        // Load stats logic (existing code below)
+        async function loadTeamSummary() {
+            try {
+                const res = await api.get('/staff/team-summary');
+                if (res.ok && Array.isArray(res.data)) {
+                    const data = res.data;
+
+                    // Helper to render top list
+                    const renderTop = (containerId, items, valueFormatter) => {
+                        const container = document.getElementById(containerId);
+                        if (!items.length) {
+                            container.innerHTML = '<div class="text-muted">Sem dados</div>';
+                            return;
+                        }
+                        container.innerHTML = items.slice(0, 3).map((s, i) => `
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <span class="badge bg-dark me-2">${i + 1}º</span>
+                                    <span class="fw-medium">${s.nome}</span>
+                                </div>
+                                <span class="fw-bold">${valueFormatter(s)}</span>
+                            </div>
+                        `).join('');
+                    };
+
+                    // Sort and render Hours
+                    const topHours = [...data].sort((a, b) => b.week_minutes - a.week_minutes);
+                    renderTop('top-hours', topHours, s => formatMinutes(s.week_minutes));
+
+                    // Sort and render Reports
+                    const topReports = [...data].sort((a, b) => b.week_reports - a.week_reports);
+                    renderTop('top-reports', topReports, s => s.week_reports);
+
+                    // Sort and render Bans
+                    const topBans = [...data].sort((a, b) => b.week_bans - a.week_bans);
+                    renderTop('top-bans', topBans, s => s.week_bans);
+
+                }
+            } catch (e) {
+                console.error('Error loading team summary:', e);
+            }
+        }
+
+        async function loadStaff() {
+            const tbody = document.getElementById('staff-list');
+            try {
+                const res = await api.get('/staff');
+                if (res.ok && Array.isArray(res.data) && res.data.length > 0) {
+                    tbody.innerHTML = res.data.map(s => `
+                        <tr>
+                            <td>#${s.id}</td>
+                            <td>${s.nome}</td>
+                            <td><span class="badge bg-secondary text-uppercase">${(s.cargo || '').toUpperCase()}</span></td>
+                            <td>${(s.rg && s.rg !== 0 ? s.rg : s.id)}</td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-outline-light" data-id="${s.id}">
+                                    <i class="bi bi-bar-chart-line"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                    tbody.querySelectorAll('button[data-id]').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = parseInt(btn.getAttribute('data-id'), 10);
+                            if (id) loadActivity(id);
+                        });
+                    });
+                } else if (res.ok) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Nenhum staff encontrado.</td></tr>';
+                } else {
+                    throw new Error(res.error || 'Erro ao carregar staff');
+                }
+            } catch (e) {
+                console.error(e);
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-danger">Erro ao carregar lista de staff.</td></tr>';
+            }
+        }
+
+        function formatMinutes(mins) {
+            const m = Math.max(0, parseInt(mins || 0, 10));
+            const h = Math.floor(m / 60);
+            const r = m % 60;
+            if (h === 0) return r + ' min';
+            if (r === 0) return h + ' h';
+            return h + ' h ' + r + ' min';
+        }
+
+        async function loadActivity(id) {
+            const placeholder = document.getElementById('staff-placeholder');
+            const details = document.getElementById('staff-details');
+            const btnPdf = document.getElementById('btn-pdf');
+            placeholder.textContent = 'Carregando atividade...';
+            details.classList.add('d-none');
+            btnPdf.disabled = true;
+            try {
+                const res = await api.get(`/staff/${id}/activity`);
+                if (res.ok && res.data) {
+                    const d = res.data;
+                    currentStaffId = d.id;
+                    document.getElementById('staff-name').textContent = d.nome;
+                    const displayRg = (d.rg && d.rg !== 0 ? d.rg : d.id);
+                    document.getElementById('staff-meta').textContent = 'Cargo: ' + (d.cargo || '').toUpperCase() + ' • RG: ' + displayRg;
+                    document.getElementById('staff-total-minutes').textContent = formatMinutes(d.total_minutes);
+                    document.getElementById('staff-week-minutes').textContent = formatMinutes(d.minutes_last_7);
+                    document.getElementById('staff-total-reports').textContent = d.total_reports_handled || 0;
+                    document.getElementById('staff-week-reports').textContent = d.reports_last_7 || 0;
+                    document.getElementById('staff-total-bans').textContent = d.total_bans || 0;
+                    document.getElementById('staff-week-bans').textContent = d.bans_last_7 || 0;
+                    placeholder.classList.add('d-none');
+                    details.classList.remove('d-none');
+                    btnPdf.disabled = false;
+                } else {
+                    throw new Error(res.error || 'Erro ao carregar atividade');
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('Erro ao carregar atividade: ' + (e.message || e), 'danger');
+                placeholder.textContent = 'Erro: ' + (e.message || e);
+                details.classList.add('d-none');
+                btnPdf.disabled = true;
+            }
+        }
+
+        document.getElementById('btn-pdf').addEventListener('click', () => {
+            if (!currentStaffId) return;
+            const url = `/api/staff/${currentStaffId}/profile-pdf`;
+            window.open(url, '_blank');
+        });
+
+        document.getElementById('btn-weekly-report').addEventListener('click', () => {
+            const select = document.getElementById('staff-role-filter');
+            const cargo = select ? select.value : '';
+            const query = cargo ? `?cargo=${encodeURIComponent(cargo)}` : '';
+            const url = `/api/staff/weekly-report${query}`;
+            window.open(url, '_blank');
+        });
+
+        loadStaff();
+        loadTeamSummary();
+    </script>
+</body>
+</html>
